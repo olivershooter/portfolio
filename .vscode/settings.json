@@ -11,10 +11,6 @@
 	"editor.formatOnSave": true,
 	"editor.tabSize": 2,
 
-	"files.watcherExclude": {
-		"**/dist": true
-	},
-	"git.enableCommitSigning": true,
 	"javascript.format.enable": false,
 	"stylelint.validate": ["css"],
 	"typescript.disableAutomaticTypeAcquisition": true,
