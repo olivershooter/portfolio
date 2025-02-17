@@ -23,7 +23,7 @@ const Jobs = () => {
 				</li>
 				<li>
 					Led diverse teams across hybrid work environments, fostering
-					collaboration and inclusivity whether working remotely or in person.
+					collaboration and inclusiveness whether working remotely or in person.
 				</li>
 			</div>
 		</ul>
