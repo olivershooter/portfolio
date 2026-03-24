@@ -4,11 +4,11 @@ import { gsap } from 'gsap'
 const YEAR = new Date().getFullYear()
 
 export default function Contact() {
-  const headRef = useRef<HTMLHeadingElement>(null)
+  const headReference = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(headRef.current,
+    const context = gsap.context(() => {
+      gsap.fromTo(headReference.current,
         { opacity: 0, y: 60 },
         {
           opacity: 1,
@@ -16,14 +16,14 @@ export default function Contact() {
           duration: 1,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: headRef.current,
+            trigger: headReference.current,
             start: 'top 80%',
             toggleActions: 'play none none reverse',
           },
         }
       )
     })
-    return () => ctx.revert()
+    return () => context.revert()
   }, [])
 
   return (
@@ -42,17 +42,17 @@ export default function Contact() {
         <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-primary block mb-6">05 / Contact</span>
 
         <h2
-          ref={headRef}
+          ref={headReference}
           className="font-headline font-black text-text-base leading-[0.9] tracking-tight mb-8"
           style={{ fontSize: 'clamp(48px, 7vw, 96px)' }}
         >
-          Let's build<br />
+          Let&apos;s build<br />
           <span className="text-primary">something real.</span>
         </h2>
 
         <p className="font-body text-lg text-text-muted max-w-xl mx-auto leading-relaxed mb-12">
-          I'm interested in senior engineering roles, technically challenging problems,
-          and teams that care about craft. If that sounds like you — let's talk.
+          I&apos;m interested in senior engineering roles, technically challenging problems,
+          and teams that care about craft. If that sounds like you — let&apos;s talk.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4">
