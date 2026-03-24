@@ -9,7 +9,7 @@ import Contact from './components/Contact'
 export default function App() {
   return (
     <div className="scanline bg-bg text-text-base">
-      <div className="fixed inset-0 kinetic-grid opacity-100 pointer-events-none z-0" />
+      <div className="fixed inset-0 kinetic-grid pointer-events-none z-0" />
       <Nav />
       <main>
         <Hero />
