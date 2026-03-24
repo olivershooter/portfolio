@@ -15,9 +15,9 @@
 		"run-stylelint": "stylelint --cache --fix --ignore-path .gitignore **/*.css"
 	},
 	"dependencies": {
+		"gsap": "^3.14.2",
 		"react": "18.2.0",
-		"react-dom": "18.2.0",
-		"react-router-dom": "6.22.3"
+		"react-dom": "18.2.0"
 	},
 	"devDependencies": {
 		"@nabla/vite-plugin-eslint": "2.0.2",
@@ -29,7 +29,6 @@
 		"@types/css-mediaquery": "0.1.4",
 		"@types/react": "18.2.76",
 		"@types/react-dom": "18.2.25",
-		"@types/react-router-dom": "5.3.3",
 		"@typescript-eslint/eslint-plugin": "7.6.0",
 		"@typescript-eslint/parser": "7.6.0",
 		"@vitejs/plugin-react": "4.2.1",
