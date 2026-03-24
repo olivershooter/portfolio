@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const roles = [
   {
@@ -43,8 +42,8 @@ function RoleCard({ role, index }: { role: typeof roles[0]; index: number }) {
         </div>
 
         <ul className="space-y-3">
-          {role.bullets.map((b, j) => (
-            <li key={j} className="flex items-start gap-3 text-sm text-text-muted leading-relaxed">
+          {role.bullets.map((b) => (
+            <li key={b} className="flex items-start gap-3 text-sm text-text-muted leading-relaxed">
               <span className="text-primary mt-1 flex-shrink-0">—</span>
               <span>{b}</span>
             </li>
@@ -120,7 +119,7 @@ export default function Experience() {
         </div>
 
         {roles.map((role, i) => (
-          <RoleCard key={i} role={role} index={i} />
+          <RoleCard key={role.title} role={role} index={i} />
         ))}
 
         <div className="flex-shrink-0 w-24" />
@@ -140,7 +139,7 @@ export default function Experience() {
 
         <div className="space-y-6">
           {roles.map((role, i) => (
-            <div key={i} className="bg-surface border border-outline p-8 flex flex-col gap-6 hover:border-primary transition-colors duration-300">
+            <div key={role.title} className="bg-surface border border-outline p-8 flex flex-col gap-6 hover:border-primary transition-colors duration-300">
               <div>
                 <span className="font-mono text-[10px] uppercase tracking-widest text-primary block mb-2">{role.period}</span>
                 <h3 className="font-headline font-black text-xl text-text-base">{role.title}</h3>
@@ -148,8 +147,8 @@ export default function Experience() {
               </div>
 
               <ul className="space-y-3">
-                {role.bullets.map((b, j) => (
-                  <li key={j} className="flex items-start gap-3 text-sm text-text-muted leading-relaxed">
+                {role.bullets.map((b) => (
+                  <li key={b} className="flex items-start gap-3 text-sm text-text-muted leading-relaxed">
                     <span className="text-primary mt-1 flex-shrink-0">—</span>
                     <span>{b}</span>
                   </li>
