@@ -2,43 +2,48 @@ import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 
 export default function Hero() {
-  const tagRef = useRef<HTMLSpanElement>(null)
-  const h1Ref = useRef<HTMLHeadingElement>(null)
-  const subRef = useRef<HTMLParagraphElement>(null)
-  const ctaRef = useRef<HTMLDivElement>(null)
-  const imgRef = useRef<HTMLDivElement>(null)
+  const tagReference = useRef<HTMLSpanElement>(null)
+  const h1Reference = useRef<HTMLHeadingElement>(null)
+  const subReference = useRef<HTMLParagraphElement>(null)
+  const ctaReference = useRef<HTMLDivElement>(null)
+  const imgReference = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const tl = gsap.timeline({ delay: 0.6 })
-    tl.fromTo(tagRef.current, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' })
-      .fromTo(Array.from(h1Ref.current?.children ?? []), { opacity: 0, y: 60, skewY: 3 }, { opacity: 1, y: 0, skewY: 0, duration: 0.9, stagger: 0.12, ease: 'power3.out' }, '-=0.2')
-      .fromTo(subRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.4')
-      .fromTo(ctaRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.4')
-      .fromTo(imgRef.current, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 1, ease: 'power3.out' }, '-=0.8')
+    tl.fromTo(tagReference.current, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' })
+      .fromTo([...(h1Reference.current?.children ?? [])], { opacity: 0, y: 60, skewY: 3 }, { opacity: 1, y: 0, skewY: 0, duration: 0.9, stagger: 0.12, ease: 'power3.out' }, '-=0.2')
+      .fromTo(subReference.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.4')
+      .fromTo(ctaReference.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.4')
+      .fromTo(imgReference.current, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 1, ease: 'power3.out' }, '-=0.8')
   }, [])
+
+  const onViewWork = () => {
+    document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   return (
     <section className="relative min-h-screen flex flex-col md:flex-row pt-20 overflow-hidden">
       <div className="relative z-10 flex-1 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-24">
-        <span ref={tagRef} className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.35em] text-text-muted mb-8">
+        <span ref={tagReference} className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.35em] text-text-muted mb-8">
           <span className="w-10 h-px bg-primary" />
           London Based · Available for Senior Roles
         </span>
 
-        <h1 ref={h1Ref} className="font-headline font-black leading-[0.88] tracking-[-3px] text-text-base mb-8" style={{ fontSize: 'clamp(64px, 9vw, 120px)' }}>
+        <h1 ref={h1Reference} className="font-headline font-black leading-[0.88] tracking-[-3px] text-text-base mb-8" style={{ fontSize: 'clamp(64px, 9vw, 120px)' }}>
           <span className="block">Software</span>
           <span className="block text-primary">Engineer.</span>
         </h1>
 
-        <p ref={subRef} className="font-body text-lg text-text-muted max-w-md leading-relaxed mb-12">
+        <p ref={subReference} className="font-body text-lg text-text-muted max-w-md leading-relaxed mb-12">
           From storyteller to system builder. I design and ship full-stack
           applications that scale — from HM Government infrastructure to
           open-source tooling.
         </p>
 
-        <div ref={ctaRef} className="flex flex-wrap gap-4">
+        <div ref={ctaReference} className="flex flex-wrap gap-4">
           <button
-            onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+            type="button"
+            onClick={onViewWork}
             className="bg-primary text-bg px-10 py-4 font-headline font-bold text-sm uppercase tracking-widest hover:translate-x-1.5 transition-transform duration-200"
           >
             View Work
@@ -60,7 +65,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div ref={imgRef} className="relative flex-1 min-h-[50vh] md:min-h-screen overflow-hidden bg-surface">
+      <div ref={imgReference} className="relative flex-1 min-h-[50vh] md:min-h-screen overflow-hidden bg-surface">
         <img
           src="/images/hero.png"
           alt="Abstract circuit board"
