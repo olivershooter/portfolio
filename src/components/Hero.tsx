@@ -26,7 +26,7 @@ export default function Hero() {
       <div className="relative z-10 flex-1 flex flex-col justify-center px-8 md:px-16 lg:px-24 py-24">
         <span ref={tagReference} className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.35em] text-text-muted mb-8">
           <span className="w-10 h-px bg-primary" />
-          London Based · Available for Senior Roles
+          Manchester Based · Available for Senior Roles
         </span>
 
         <h1 ref={h1Reference} className="font-headline font-black leading-[0.88] tracking-[-3px] text-text-base mb-8" style={{ fontSize: 'clamp(64px, 9vw, 120px)' }}>
@@ -36,7 +36,7 @@ export default function Hero() {
 
         <p ref={subReference} className="font-body text-lg text-text-muted max-w-md leading-relaxed mb-12">
           From storyteller to system builder. I design and ship full-stack
-          applications that scale — from HM Government infrastructure to
+          applications that scale — from Government infrastructure to
           open-source tooling.
         </p>
 

@@ -77,7 +77,7 @@ export default function Contact() {
       <div className="relative z-10 mt-32 pt-8 border-t border-outline flex flex-col md:flex-row items-center justify-between gap-4">
         <span className="font-headline font-black text-xl text-primary tracking-tighter">OS</span>
         <span className="font-mono text-[11px] uppercase tracking-widest text-text-muted">
-          Oliver Shooter · London, UK · {YEAR}
+          Oliver Shooter · Manchester, UK · {YEAR}
         </span>
         <div className="flex gap-6">
           {[

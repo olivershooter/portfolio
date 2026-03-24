@@ -4,7 +4,7 @@ import { gsap } from 'gsap'
 const lines = [
   { label: '2014', text: 'Started in Media Production. Storytelling, visual thinking, editorial instinct.' },
   { label: '2020', text: 'Pivoted hard. MSc Computer Science, University of Birmingham.' },
-  { label: '2021', text: 'Joined HM Government as Junior Engineer. Started shipping.' },
+  { label: '2021', text: 'Joined Government as Junior Engineer. Started shipping.' },
   { label: '2023', text: 'Promoted to Software Engineer. Owning full-stack systems at scale.' },
   { label: 'NOW', text: 'Building observability platforms, migrating monoliths, leading teams.' },
 ]

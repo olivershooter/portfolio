@@ -4,7 +4,7 @@ import { gsap } from 'gsap'
 const roles = [
   {
     title: 'Junior Software Engineer',
-    org: "His Majesty's Government",
+    org: "Government",
     period: 'Oct 2022 – Jun 2023',
     bullets: [
       'Migrated Create React App → Vite, slashing build times and improving security posture.',
@@ -16,7 +16,7 @@ const roles = [
   },
   {
     title: 'Software Engineer',
-    org: "His Majesty's Government",
+    org: "Government",
     period: 'Jun 2023 – Present',
     bullets: [
       'Delivered a full-stack onboarding application (React + Spring Boot + OpenShift). Now a core training tool for all employees.',

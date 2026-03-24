@@ -93,7 +93,7 @@ export default function Nav() {
           </a>
         </div>
         <span className="absolute bottom-12 font-mono text-[11px] uppercase tracking-widest text-text-muted">
-          51.5074° N, 0.1278° W
+          53.4808° N, 2.2426° W
         </span>
       </div>
     </>
