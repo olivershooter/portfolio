@@ -25,11 +25,11 @@ const projects = [
 ]
 
 export default function Projects() {
-  const cardsRef = useRef<HTMLDivElement[]>([])
+  const cardsReference = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      cardsRef.current.forEach((card) => {
+    const context = gsap.context(() => {
+      for (const card of cardsReference.current) {
         gsap.fromTo(card,
           { opacity: 0, y: 80 },
           {
@@ -44,9 +44,9 @@ export default function Projects() {
             },
           }
         )
-      })
+      }
     })
-    return () => ctx.revert()
+    return () => context.revert()
   }, [])
 
   return (
@@ -66,10 +66,10 @@ export default function Projects() {
         </div>
 
         <div className="space-y-6">
-          {projects.map((project, i) => (
+          {projects.map((project, index) => (
             <div
               key={project.index}
-              ref={el => { if (el) cardsRef.current[i] = el }}
+              ref={element => { if (element) cardsReference.current[index] = element }}
               className={`group relative overflow-hidden bg-bg border-l-4 ${project.accent} hover:border-primary transition-all duration-500 flex flex-col md:flex-row`}
             >
               {/* Image */}
@@ -87,9 +87,9 @@ export default function Projects() {
                 <div>
                   <div className="flex items-start justify-between mb-4">
                     <span className="font-mono text-[10px] uppercase tracking-widest text-primary">{project.index}</span>
-                    {project.live && (
+                    {project.live ? (
                       <span className="font-mono text-[10px] uppercase tracking-widest text-text-muted opacity-0 group-hover:opacity-100 transition-opacity duration-300">Live Project</span>
-                    )}
+                    ) : null}
                   </div>
                   <h3 className="font-headline font-black text-4xl md:text-5xl text-text-base mb-3 tracking-tight">{project.title}</h3>
                   <p className="font-mono text-sm text-primary mb-4 uppercase tracking-wider">{project.tagline}</p>
@@ -105,18 +105,18 @@ export default function Projects() {
                     ))}
                   </div>
                   <div className="flex gap-4">
-                    {project.live && (
+                    {project.live ? (
                       <a href={project.live} target="_blank" rel="noreferrer"
                         className="font-headline font-bold text-sm uppercase tracking-wider text-primary hover:underline flex items-center gap-1">
                         Live ↗
                       </a>
-                    )}
-                    {project.github && (
+                    ) : null}
+                    {'github' in project ? (
                       <a href={project.github} target="_blank" rel="noreferrer"
                         className="font-headline font-bold text-sm uppercase tracking-wider text-text-muted hover:text-primary transition-colors flex items-center gap-1">
                         GitHub ↗
                       </a>
-                    )}
+                    ) : null}
                   </div>
                 </div>
               </div>
