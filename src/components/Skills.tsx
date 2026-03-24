@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const categories = [
   {
@@ -39,21 +38,24 @@ export default function Skills() {
   const cardsRef = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
-    gsap.fromTo(cardsRef.current,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.7,
-        stagger: 0.08,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: cardsRef.current[0],
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-      }
-    )
+    const ctx = gsap.context(() => {
+      gsap.fromTo(cardsRef.current,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          stagger: 0.08,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: cardsRef.current[0],
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+    })
+    return () => ctx.revert()
   }, [])
 
   return (

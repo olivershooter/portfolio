@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const projects = [
   {
@@ -29,22 +28,25 @@ export default function Projects() {
   const cardsRef = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
-    cardsRef.current.forEach((card) => {
-      gsap.fromTo(card,
-        { opacity: 0, y: 80 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 75%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      )
+    const ctx = gsap.context(() => {
+      cardsRef.current.forEach((card) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 80 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 75%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        )
+      })
     })
+    return () => ctx.revert()
   }, [])
 
   return (
