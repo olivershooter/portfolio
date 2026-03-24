@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const lines = [
   { label: '2014', text: 'Started in Media Production. Storytelling, visual thinking, editorial instinct.' },
@@ -14,23 +13,26 @@ export default function About() {
   const linesRef = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
-    linesRef.current.forEach((el, i) => {
-      gsap.fromTo(el,
-        { opacity: 0, x: -40 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-          },
-          delay: i * 0.05,
-        }
-      )
+    const ctx = gsap.context(() => {
+      linesRef.current.forEach((el, i) => {
+        gsap.fromTo(el,
+          { opacity: 0, x: -40 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 80%',
+              toggleActions: 'play none none reverse',
+            },
+            delay: i * 0.05,
+          }
+        )
+      })
     })
+    return () => ctx.revert()
   }, [])
 
   return (
