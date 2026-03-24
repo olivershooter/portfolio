@@ -8,7 +8,7 @@ const projects = [
     tagline: 'Full-stack sports analytics. No sign-ups, no paywalls.',
     description: 'Built a complete sports analytics platform delivering historical match results, live statistics, timelines, and highlights — entirely free. React/TypeScript frontend powered by a Python/FastAPI backend with third-party API integrations.',
     stack: ['React', 'TypeScript', 'Vite', 'FastAPI', 'Python'],
-    live: 'https://football-statistics.olivershooter.com',
+    live: 'https://football.olivershooter.com',
     image: '/images/football.png',
     accent: 'border-primary',
   },
