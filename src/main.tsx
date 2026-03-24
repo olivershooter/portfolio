@@ -7,7 +7,10 @@ import App from './App'
 
 gsap.registerPlugin(ScrollTrigger)
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.querySelector('#root')
+if (!rootElement) throw new Error('Root element not found')
+
+createRoot(rootElement).render(
   <StrictMode>
     <App />
   </StrictMode>
