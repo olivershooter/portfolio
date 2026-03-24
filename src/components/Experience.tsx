@@ -17,7 +17,7 @@ const roles = [
   {
     title: 'Software Engineer',
     org: "Government",
-    period: 'Jun 2023 – Present',
+    period: 'Jun 2023 – Feb 2026',
     bullets: [
       'Delivered a full-stack onboarding application (React + Spring Boot + OpenShift). Now a core training tool for all employees.',
       'Migrated a static HTML prototype to React/Vite + FastAPI + MongoDB with WCAG 2.1 compliance. Used by all project customers.',
@@ -25,6 +25,18 @@ const roles = [
       'Led modernisation of a monolithic monitoring stack into microservices using Helm, Kubernetes, Grafana, Loki, Mimir, and Tempo.',
     ],
     stack: ['React', 'FastAPI', 'Spring Boot', 'MongoDB', 'Kubernetes', 'Helm', 'Grafana', 'OpenShift'],
+  },
+  {
+    title: 'Senior Consultant · Software Engineer',
+    org: 'Deloitte',
+    period: 'Feb 2026 – Present',
+    bullets: [
+      'Embedded within client-facing delivery teams, building and shipping production frontend experiences at consulting pace.',
+      'Developing performant, accessible React applications — translating complex requirements into clean, maintainable component architecture.',
+      'Collaborating across design, product, and backend disciplines to drive frontend quality and consistency across engagements.',
+      'Operating at Senior Consultant level, contributing to technical strategy and mentoring within project teams.',
+    ],
+    stack: ['React', 'TypeScript', 'Next.js', 'Tailwind CSS'],
   },
 ]
 
