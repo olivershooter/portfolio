@@ -35,11 +35,11 @@ const categories = [
 ]
 
 export default function Skills() {
-  const cardsRef = useRef<HTMLDivElement[]>([])
+  const cardsReference = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(cardsRef.current,
+    const context = gsap.context(() => {
+      gsap.fromTo(cardsReference.current,
         { opacity: 0, y: 40 },
         {
           opacity: 1,
@@ -48,14 +48,14 @@ export default function Skills() {
           stagger: 0.08,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: cardsRef.current[0],
+            trigger: cardsReference.current[0],
             start: 'top 80%',
             toggleActions: 'play none none reverse',
           },
         }
       )
     })
-    return () => ctx.revert()
+    return () => context.revert()
   }, [])
 
   return (
@@ -71,10 +71,10 @@ export default function Skills() {
         </h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-outline">
-          {categories.map((cat, i) => (
+          {categories.map((cat, index) => (
             <div
               key={cat.title}
-              ref={el => { if (el) cardsRef.current[i] = el }}
+              ref={element => { if (element) cardsReference.current[index] = element }}
               className={`bg-surface p-5 md:p-8 group hover:bg-surface-high transition-colors duration-200 ${cat.size}`}
             >
               <h3 className="font-mono text-[11px] uppercase tracking-[0.25em] text-primary mb-6">{cat.title}</h3>
