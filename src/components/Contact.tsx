@@ -57,10 +57,10 @@ export default function Contact() {
 
         <div className="flex flex-wrap items-center justify-center gap-4">
           <a
-            href="mailto:olivershooter@gmail.com"
+            href="mailto:contact@olivershooter.com"
             className="bg-primary text-bg px-6 md:px-10 py-4 font-headline font-bold text-xs md:text-sm uppercase tracking-widest hover:translate-x-1.5 transition-transform duration-200"
           >
-            olivershooter@gmail.com
+            contact@olivershooter.com
           </a>
           <a
             href="https://github.com/olivershooter"

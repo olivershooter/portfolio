@@ -48,7 +48,7 @@ export default function Nav() {
             </button>
           ))}
           <a
-            href="mailto:olivershooter@gmail.com"
+            href="mailto:contact@olivershooter.com"
             className="bg-primary text-bg px-5 py-2 font-headline text-xs font-bold uppercase tracking-widest hover:translate-x-1 transition-transform duration-200"
           >
             Hire Me
@@ -85,7 +85,7 @@ export default function Nav() {
             </button>
           ))}
           <a
-            href="mailto:olivershooter@gmail.com"
+            href="mailto:contact@olivershooter.com"
             onClick={onMenuClose}
             className="mt-4 bg-primary text-bg px-8 py-4 font-headline font-bold text-sm uppercase tracking-widest"
           >
