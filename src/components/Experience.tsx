@@ -28,9 +28,19 @@ const roles = [
   },
 ]
 
-function RoleCard({ role, index }: { role: typeof roles[0]; index: number }) {
+function RoleCard({
+  role,
+  index,
+  className = 'flex-shrink-0 w-[min(560px,88vw)] h-[70vh] p-10 mr-6 flex flex-col justify-between',
+  showIndex = true,
+}: {
+  role: typeof roles[0]
+  index: number
+  className?: string
+  showIndex?: boolean
+}) {
   return (
-    <div className="flex-shrink-0 w-[min(560px,88vw)] h-[70vh] bg-surface border border-outline p-10 mr-6 flex flex-col justify-between group hover:border-primary transition-colors duration-300">
+    <div className={`bg-surface border border-outline hover:border-primary transition-colors duration-300 group ${className}`}>
       <div>
         <div className="flex items-start justify-between mb-6">
           <div>
@@ -38,7 +48,9 @@ function RoleCard({ role, index }: { role: typeof roles[0]; index: number }) {
             <h3 className="font-headline font-black text-2xl text-text-base">{role.title}</h3>
             <p className="font-mono text-sm text-text-muted mt-1">{role.org}</p>
           </div>
-          <span className="text-2xl text-outline group-hover:text-primary transition-colors duration-300 mt-1">0{index + 1}</span>
+          {showIndex && (
+            <span className="text-2xl text-outline group-hover:text-primary transition-colors duration-300 mt-1">0{index + 1}</span>
+          )}
         </div>
 
         <ul className="space-y-3">
@@ -139,30 +151,13 @@ export default function Experience() {
 
         <div className="space-y-6">
           {roles.map((role, i) => (
-            <div key={role.title} className="bg-surface border border-outline p-8 flex flex-col gap-6 hover:border-primary transition-colors duration-300">
-              <div>
-                <span className="font-mono text-[10px] uppercase tracking-widest text-primary block mb-2">{role.period}</span>
-                <h3 className="font-headline font-black text-xl text-text-base">{role.title}</h3>
-                <p className="font-mono text-sm text-text-muted mt-1">{role.org}</p>
-              </div>
-
-              <ul className="space-y-3">
-                {role.bullets.map((b) => (
-                  <li key={b} className="flex items-start gap-3 text-sm text-text-muted leading-relaxed">
-                    <span className="text-primary mt-1 flex-shrink-0">—</span>
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="flex flex-wrap gap-2">
-                {role.stack.map(s => (
-                  <span key={s} className="font-mono text-[10px] uppercase tracking-wider text-text-muted bg-surface-high px-3 py-1.5">
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </div>
+            <RoleCard
+              key={role.title}
+              role={role}
+              index={i}
+              showIndex={false}
+              className="p-8 flex flex-col gap-6"
+            />
           ))}
         </div>
       </div>
