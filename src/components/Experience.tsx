@@ -32,12 +32,12 @@ function RoleCard({
   role,
   index,
   className = 'flex-shrink-0 w-[min(560px,88vw)] h-[70vh] p-10 mr-6 flex flex-col justify-between',
-  showIndex = true,
+  hasIndex = true,
 }: {
   role: typeof roles[0]
   index: number
   className?: string
-  showIndex?: boolean
+  hasIndex?: boolean
 }) {
   return (
     <div className={`bg-surface border border-outline hover:border-primary transition-colors duration-300 group ${className}`}>
@@ -48,9 +48,9 @@ function RoleCard({
             <h3 className="font-headline font-black text-2xl text-text-base">{role.title}</h3>
             <p className="font-mono text-sm text-text-muted mt-1">{role.org}</p>
           </div>
-          {showIndex && (
+          {hasIndex ? (
             <span className="text-2xl text-outline group-hover:text-primary transition-colors duration-300 mt-1">0{index + 1}</span>
-          )}
+          ) : null}
         </div>
 
         <ul className="space-y-3">
@@ -75,16 +75,13 @@ function RoleCard({
 }
 
 export default function Experience() {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
+  const sectionReference = useRef<HTMLDivElement>(null)
+  const trackReference = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const track = trackRef.current
-    const section = sectionRef.current
-    if (!track || !section) return
-
-    // Only enable horizontal scroll on tablet+
-    if (window.innerWidth < 768) return
+    const track = trackReference.current
+    const section = sectionReference.current
+    if (!track || !section || window.innerWidth < 768) return undefined
 
     const totalWidth = track.scrollWidth - section.offsetWidth
 
@@ -108,9 +105,9 @@ export default function Experience() {
   }, [])
 
   return (
-    <section ref={sectionRef} id="work" className="bg-bg">
+    <section ref={sectionReference} id="work" className="bg-bg">
       {/* Desktop: horizontal scroll */}
-      <div ref={trackRef} className="hidden md:flex h-screen items-center gap-0 pl-8 md:pl-16 lg:pl-24 overflow-hidden">
+      <div ref={trackReference} className="hidden md:flex h-screen items-center gap-0 pl-8 md:pl-16 lg:pl-24 overflow-hidden">
         {/* Section header card */}
         <div className="flex-shrink-0 w-[min(400px,85vw)] h-[70vh] flex flex-col justify-between border-r border-outline pr-16 mr-16">
           <div>
@@ -130,8 +127,8 @@ export default function Experience() {
           </div>
         </div>
 
-        {roles.map((role, i) => (
-          <RoleCard key={role.title} role={role} index={i} />
+        {roles.map((role, index) => (
+          <RoleCard key={role.title} role={role} index={index} />
         ))}
 
         <div className="flex-shrink-0 w-24" />
@@ -150,12 +147,12 @@ export default function Experience() {
         </h2>
 
         <div className="space-y-6">
-          {roles.map((role, i) => (
+          {roles.map((role, index) => (
             <RoleCard
               key={role.title}
               role={role}
-              index={i}
-              showIndex={false}
+              index={index}
+              hasIndex={false}
               className="p-8 flex flex-col gap-6"
             />
           ))}
