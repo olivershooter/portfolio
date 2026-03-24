@@ -10,12 +10,12 @@ const lines = [
 ]
 
 export default function About() {
-  const linesRef = useRef<HTMLDivElement[]>([])
+  const linesReference = useRef<HTMLDivElement[]>([])
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      linesRef.current.forEach((el, i) => {
-        gsap.fromTo(el,
+    const context = gsap.context(() => {
+      for (const [index, element] of linesReference.current.entries()) {
+        gsap.fromTo(element,
           { opacity: 0, x: -40 },
           {
             opacity: 1,
@@ -23,16 +23,16 @@ export default function About() {
             duration: 0.8,
             ease: 'power3.out',
             scrollTrigger: {
-              trigger: el,
+              trigger: element,
               start: 'top 80%',
               toggleActions: 'play none none reverse',
             },
-            delay: i * 0.05,
+            delay: index * 0.05,
           }
         )
-      })
+      }
     })
-    return () => ctx.revert()
+    return () => context.revert()
   }, [])
 
   return (
@@ -52,10 +52,10 @@ export default function About() {
         </h2>
 
         <div className="space-y-0 border-t border-outline">
-          {lines.map((line, i) => (
+          {lines.map((line, index) => (
             <div
               key={line.label}
-              ref={el => { if (el) linesRef.current[i] = el }}
+              ref={element => { if (element) linesReference.current[index] = element }}
               className="group flex items-start gap-8 py-8 border-b border-outline hover:bg-surface-high transition-colors duration-200 px-4 -mx-4"
             >
               <span className="font-mono text-[11px] uppercase tracking-widest text-primary min-w-[48px] pt-1">{line.label}</span>
