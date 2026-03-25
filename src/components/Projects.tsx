@@ -57,7 +57,7 @@ export default function Projects() {
             <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-primary block mb-4">03 / Projects</span>
             <h2
               className="font-headline font-black text-text-base leading-[0.9] tracking-tight"
-              style={{ fontSize: 'clamp(48px, 6vw, 80px)' }}
+              style={{ fontSize: 'clamp(36px, 6vw, 80px)' }}
             >
               Shipped.<br />
               <span className="text-primary">In the wild.</span>

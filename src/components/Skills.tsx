@@ -64,7 +64,7 @@ export default function Skills() {
         <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-primary block mb-4">04 / Skills</span>
         <h2
           className="font-headline font-black text-text-base leading-[0.9] tracking-tight mb-16"
-          style={{ fontSize: 'clamp(48px, 6vw, 80px)' }}
+          style={{ fontSize: 'clamp(36px, 6vw, 80px)' }}
         >
           The stack.<br />
           <span className="text-primary">No fluff.</span>
