@@ -44,7 +44,7 @@ export default function About() {
 
         <h2
           className="font-headline font-black text-text-base mb-20 leading-[0.9] tracking-tight"
-          style={{ fontSize: 'clamp(48px, 7vw, 96px)' }}
+          style={{ fontSize: 'clamp(36px, 7vw, 96px)' }}
         >
           A filmmaker<br />
           <span className="text-primary">who learned</span><br />

@@ -44,7 +44,7 @@ export default function Contact() {
         <h2
           ref={headReference}
           className="font-headline font-black text-text-base leading-[0.9] tracking-tight mb-8"
-          style={{ fontSize: 'clamp(48px, 7vw, 96px)' }}
+          style={{ fontSize: 'clamp(36px, 7vw, 96px)' }}
         >
           Let&apos;s build<br />
           <span className="text-primary">something real.</span>

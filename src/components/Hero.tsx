@@ -29,7 +29,7 @@ export default function Hero() {
           Manchester Based · Available for Developer Roles
         </span>
 
-        <h1 ref={h1Reference} className="font-headline font-black leading-[0.88] tracking-[-3px] text-text-base mb-8" style={{ fontSize: 'clamp(64px, 9vw, 120px)' }}>
+        <h1 ref={h1Reference} className="font-headline font-black leading-[0.88] tracking-[-3px] text-text-base mb-8" style={{ fontSize: 'clamp(44px, 9vw, 120px)' }}>
           <span className="block">Software</span>
           <span className="block text-primary">Engineer.</span>
         </h1>
