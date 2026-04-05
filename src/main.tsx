@@ -11,7 +11,7 @@ const rootElement = document.querySelector('#root')
 if (!rootElement) throw new Error('Root element not found')
 
 createRoot(rootElement).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+	<StrictMode>
+		<App />
+	</StrictMode>
 )
