@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import inlineAssets from './src/build/inlineAssets'
 
 export default defineConfig(({ mode }) => ({
 	test: {
@@ -26,7 +27,8 @@ export default defineConfig(({ mode }) => ({
 				'src/late-shift/scene/camera.ts',
 				'src/late-shift/engine/loop.ts',
 				'src/late-shift/ui/debugParameters.ts',
-				'src/late-shift/ui/useScrollIntoPhone.ts'
+				'src/late-shift/ui/useScrollIntoPhone.ts',
+				'src/late-shift/engine/tween.ts'
 			],
 			exclude: ['**/__tests__/**'],
 			thresholds: {
@@ -47,7 +49,11 @@ export default defineConfig(({ mode }) => ({
 					eslintPlugin(),
 					VitePWA({
 						registerType: 'autoUpdate',
-						includeAssets: ['favicon.png'],
+						includeAssets: [
+							'favicon.svg',
+							'favicon.png',
+							'apple-touch-icon.png'
+						],
 						workbox: {
 							// Images (~4 MB) load lazily on demand; precache only the app shell and Latin fonts
 							globPatterns: ['**/*.{js,css,html}', 'assets/*-latin-*.woff2']
@@ -56,6 +62,7 @@ export default defineConfig(({ mode }) => ({
 				])
 	],
 	build: {
+		assetsInlineLimit: inlineAssets,
 		rollupOptions: {
 			output: {
 				manualChunks: { gsap: ['gsap'] }

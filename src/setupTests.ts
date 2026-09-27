@@ -16,14 +16,17 @@ class ObserverStub {
 
 // Node 26 ships its own `localStorage` global (undefined without --localstorage-file),
 // which shadows jsdom's. Point both Web Storage globals at jsdom's implementation.
+// Tests that opt into the node environment (no jsdom) skip the browser stubs.
 const { jsdom } = globalThis as unknown as {
-	jsdom: { window: { localStorage: Storage; sessionStorage: Storage } }
+	jsdom?: { window: { localStorage: Storage; sessionStorage: Storage } }
 }
-vi.stubGlobal('localStorage', jsdom.window.localStorage)
-vi.stubGlobal('sessionStorage', jsdom.window.sessionStorage)
-vi.stubGlobal('ResizeObserver', ObserverStub)
-vi.stubGlobal('IntersectionObserver', ObserverStub)
-vi.stubGlobal('scrollTo', vi.fn())
+if (jsdom) {
+	vi.stubGlobal('localStorage', jsdom.window.localStorage)
+	vi.stubGlobal('sessionStorage', jsdom.window.sessionStorage)
+	vi.stubGlobal('ResizeObserver', ObserverStub)
+	vi.stubGlobal('IntersectionObserver', ObserverStub)
+	vi.stubGlobal('scrollTo', vi.fn())
+}
 
 // ScrollTrigger needs real layout; components get a no-op hook, scrubAction stays real
 vi.mock('./late-shift/ui/useScrollIntoPhone', async importOriginal => ({
@@ -34,6 +37,7 @@ vi.mock('./late-shift/ui/useScrollIntoPhone', async importOriginal => ({
 }))
 
 beforeEach(() => {
+	if (!jsdom) return
 	setReducedMotion(false)
 	window.localStorage.clear()
 	window.sessionStorage.clear()

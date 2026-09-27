@@ -1,6 +1,6 @@
-import { gsap } from 'gsap'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import type { RoomEngine } from '../engine/roomEngine'
+import { tweenValue, type TweenHandle } from '../engine/tween'
 import type { ObjectId } from '../scene/objects'
 
 export interface CameraTween {
@@ -23,7 +23,7 @@ export default function useCameraTween(
 	isReducedMotion: boolean
 ): CameraTween {
 	const camera = useRef<CameraState>({ progress: 0, target: null })
-	const tween = useRef<gsap.core.Tween | null>(null)
+	const tween = useRef<TweenHandle | null>(null)
 	const engineReference = useRef(engine)
 	// Read at flight time, so flyTo keeps one identity and callers' effects don't re-run
 	const reducedReference = useRef(isReducedMotion)
@@ -58,16 +58,15 @@ export default function useCameraTween(
 			new Promise<void>(resolve => {
 				const state = camera.current
 				const distance = Math.abs(to - state.progress)
-				tween.current = gsap.to(state, {
-					progress: to,
+				tween.current = tweenValue({
+					from: state.progress,
+					to,
 					duration: reducedReference.current ? 0 : FULL_FLIGHT * distance,
-					ease: 'power2.inOut',
-					onUpdate: () =>
-						engineReference.current?.setCamera(target, state.progress),
-					onComplete: () => {
-						engineReference.current?.setCamera(target, state.progress)
-						resolve()
-					}
+					onUpdate: value => {
+						state.progress = value
+						engineReference.current?.setCamera(target, value)
+					},
+					onComplete: resolve
 				})
 			}),
 		[]

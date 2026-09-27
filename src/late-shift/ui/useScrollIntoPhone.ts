@@ -1,5 +1,3 @@
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useEffect, type RefObject } from 'react'
 
 export type ScrubAction =
@@ -28,17 +26,29 @@ export default function useScrollIntoPhone({
 	useEffect(() => {
 		const spacer = spacerReference.current
 		if (!isEnabled || !spacer) return undefined
-		gsap.registerPlugin(ScrollTrigger)
-		const trigger = ScrollTrigger.create({
-			trigger: spacer,
-			start: 'top top',
-			end: 'bottom bottom',
-			onUpdate: self => {
-				const action = scrubAction(self.progress)
-				if (action.kind === 'open') onArrive()
-				else onProgress(action.progress)
+		let isActive = true
+		let kill: (() => void) | undefined
+		// GSAP loads only once scroll-scrub is needed, keeping it off the first paint
+		void Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(
+			([{ gsap }, { ScrollTrigger }]) => {
+				if (!isActive) return
+				gsap.registerPlugin(ScrollTrigger)
+				const trigger = ScrollTrigger.create({
+					trigger: spacer,
+					start: 'top top',
+					end: 'bottom bottom',
+					onUpdate: self => {
+						const action = scrubAction(self.progress)
+						if (action.kind === 'open') onArrive()
+						else onProgress(action.progress)
+					}
+				})
+				kill = () => trigger.kill()
 			}
-		})
-		return () => trigger.kill()
+		)
+		return () => {
+			isActive = false
+			kill?.()
+		}
 	}, [spacerReference, isEnabled, onProgress, onArrive])
 }
