@@ -13,16 +13,20 @@ export default function useLofiRadio() {
 	const onToggle = useCallback(() => {
 		radio.current ??= createLofiRadio()
 		const next = !radio.current.isPlaying()
-		if (next) void radio.current.start()
-		else radio.current.stop()
-		setIsOn(next)
-		writeStored('session', RADIO_KEY, next ? 'on' : 'off')
+		const record = (on: boolean) => {
+			setIsOn(on)
+			writeStored('session', RADIO_KEY, on ? 'on' : 'off')
+		}
+		if (next) {
+			radio.current.start().catch(() => record(false))
+		} else radio.current.stop()
+		record(next)
 		track('radio-toggled', { on: next })
 	}, [])
 
 	useEffect(
 		() => () => {
-			radio.current?.stop()
+			radio.current?.dispose()
 		},
 		[]
 	)

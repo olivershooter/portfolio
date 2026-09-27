@@ -47,6 +47,8 @@ export default function LateShift() {
 	const [isZoomed, setIsZoomed] = useState(false)
 	const cameraObject = useRef<ObjectId | null>(null)
 	const pendingFocus = useRef<ObjectId | null>(null)
+	const opener = useRef<HTMLElement | null>(null)
+	const hasArrived = useRef(false)
 	const isInitial = useRef(true)
 	const spacerReference = useRef<HTMLDivElement>(null)
 	const [isScrubEnabled, setIsScrubEnabled] = useState(true)
@@ -59,10 +61,12 @@ export default function LateShift() {
 		},
 		[jumpTo]
 	)
-	const onScrubArrive = useCallback(
-		() => navigate('/late-shift/android'),
-		[navigate]
-	)
+	const onScrubArrive = useCallback(() => {
+		// ScrollTrigger can report the end more than once before React re-renders
+		if (hasArrived.current) return
+		hasArrived.current = true
+		navigate('/late-shift/android')
+	}, [navigate])
 	useScrollIntoPhone({
 		spacerReference,
 		isEnabled: !isReducedMotion && isScrubEnabled && section === null,
@@ -91,10 +95,12 @@ export default function LateShift() {
 		if (section === null) {
 			setPageSection(null)
 			setCovered(false)
+			hasArrived.current = false
 			if (previous !== null) {
 				setIsScrubEnabled(false)
 				window.scrollTo({ top: 0 })
-				void flyTo(previous, 0).then(() => {
+				const leave = hasFailed ? jumpTo(previous, 0) : flyTo(previous, 0)
+				void leave.then(() => {
 					if (isCancelled) return
 					cameraObject.current = null
 					pendingFocus.current = previous
@@ -125,15 +131,25 @@ export default function LateShift() {
 
 	useEffect(() => {
 		if (isZoomed || pendingFocus.current === null) return
-		document
-			.querySelector<HTMLElement>(`[data-object="${pendingFocus.current}"]`)
-			?.focus()
+		// Return focus to whatever opened the section; fall back to that object's tag
+		const returnTo = opener.current?.isConnected
+			? opener.current
+			: document.querySelector<HTMLElement>(
+					`[data-object="${pendingFocus.current}"]`
+				)
+		returnTo?.focus()
 		pendingFocus.current = null
+		opener.current = null
 	}, [isZoomed])
 
 	const onActivate = useCallback(
 		(id: ObjectId) => {
 			setIsHintVisible(false)
+			opener.current =
+				document.activeElement instanceof HTMLElement &&
+				document.activeElement !== document.body
+					? document.activeElement
+					: null
 			const object = getRoomObject(id)
 			if (object.section === null) {
 				onRadioToggle()
@@ -145,7 +161,8 @@ export default function LateShift() {
 	)
 	const onClose = useCallback(() => navigate('/late-shift'), [navigate])
 	const onHover = setHovered
-	const isStageZoomed = isZoomed && pageSection !== null
+	// Tags, hint and hit-testing are off for the whole camera move, not just once a page is open
+	const isStageZoomed = isZoomed
 	const onHighlight = setHighlighted
 
 	if (path !== '' && section === null)
@@ -163,7 +180,7 @@ export default function LateShift() {
 				part of the portfolio.
 			</p>
 			<div ref={spacerReference} className='room-scroll'>
-				<div className='room-sticky'>
+				<div className='room-sticky' data-testid='room-sticky'>
 					<RoomStage
 						layoutName={layoutName}
 						canvasReference={canvasReference}
@@ -185,13 +202,13 @@ export default function LateShift() {
 						onActivate={onActivate}
 						onHighlight={onHighlight}
 					/>
+					<p className='late-shift-footer'>
+						<Link to='/quick'>Read everything on one page</Link>
+						<span aria-hidden='true'> · </span>
+						<SwitchVersionLink />
+					</p>
 				</div>
 			</div>
-			<p className='late-shift-footer'>
-				<Link to='/quick'>Read everything on one page</Link>
-				<span aria-hidden='true'> · </span>
-				<SwitchVersionLink />
-			</p>
 			{pageSection ? (
 				<SectionPage section={pageSection} onClose={onClose} />
 			) : null}

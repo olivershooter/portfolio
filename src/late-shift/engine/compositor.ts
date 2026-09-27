@@ -20,6 +20,9 @@ interface Plate {
 function context2d(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
 	const g = canvas.getContext('2d')
 	if (!g) throw new Error('Canvas 2D is not available')
+	// Safari < 16 and Firefox < 112 have no roundRect; the scene needs it
+	if (typeof g.roundRect !== 'function')
+		throw new Error('Canvas roundRect is not supported')
 	return g
 }
 
@@ -30,13 +33,16 @@ function makeCanvas(width: number, height: number): HTMLCanvasElement {
 	return canvas
 }
 
-function makeGrain(width: number, height: number): HTMLCanvasElement {
-	const canvas = makeCanvas(width, height)
+/** Grain is a small repeating tile, so resizing never regenerates full-screen noise. */
+const GRAIN_TILE = 256
+
+function makeGrainTile(): HTMLCanvasElement {
+	const canvas = makeCanvas(GRAIN_TILE, GRAIN_TILE)
 	const g = context2d(canvas)
-	const image = g.createImageData(width, height)
+	const image = g.createImageData(GRAIN_TILE, GRAIN_TILE)
 	const { data } = image
-	for (let y = 0, index = 0; y < height; y += 1) {
-		for (let x = 0; x < width; x += 1, index += 4) {
+	for (let y = 0, index = 0; y < GRAIN_TILE; y += 1) {
+		for (let x = 0; x < GRAIN_TILE; x += 1, index += 4) {
 			const value = 255 - hash(x, y, 7) * 46 - hash(x >> 3, y >> 1, 9) * 14
 			data[index] = value
 			data[index + 1] = value
@@ -55,19 +61,25 @@ export function createCompositor(
 	const main = context2d(canvas)
 	let width = 1
 	let height = 1
-	let plates: Plate[] = []
-	let grain = makeCanvas(1, 1)
+	// Plates are created once and resized in place; iOS caps total canvas memory
+	const plates: Plate[] = INKS.map((ink, index) => {
+		const plate = makeCanvas(1, 1)
+		return { ink, index, canvas: plate, g: context2d(plate) }
+	})
+	const grain = main.createPattern(makeGrainTile(), 'repeat')
 
 	const resize = (cssWidth: number, cssHeight: number) => {
-		width = Math.max(1, Math.round(cssWidth * options.dpr))
-		height = Math.max(1, Math.round(cssHeight * options.dpr))
+		const nextWidth = Math.max(1, Math.round(cssWidth * options.dpr))
+		const nextHeight = Math.max(1, Math.round(cssHeight * options.dpr))
+		if (nextWidth === width && nextHeight === height) return
+		width = nextWidth
+		height = nextHeight
 		canvas.width = width
 		canvas.height = height
-		plates = INKS.map((ink, index) => {
-			const plate = makeCanvas(width, height)
-			return { ink, index, canvas: plate, g: context2d(plate) }
-		})
-		grain = makeGrain(width, height)
+		for (const plate of plates) {
+			plate.canvas.width = width
+			plate.canvas.height = height
+		}
 	}
 
 	const render: Compositor['render'] = (time, viewport, draw) => {
@@ -95,9 +107,12 @@ export function createCompositor(
 			main.globalCompositeOperation = 'multiply'
 			main.drawImage(plateCanvas, 0, 0)
 		}
-		main.globalCompositeOperation = 'multiply'
-		main.globalAlpha = 0.25 + 0.75 * options.grain
-		main.drawImage(grain, 0, 0)
+		if (grain) {
+			main.globalCompositeOperation = 'multiply'
+			main.globalAlpha = 0.25 + 0.75 * options.grain
+			main.fillStyle = grain
+			main.fillRect(0, 0, width, height)
+		}
 		main.globalAlpha = 1
 		main.globalCompositeOperation = 'source-over'
 	}

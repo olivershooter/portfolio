@@ -26,14 +26,17 @@ export default function useRoomEngine({
 		const stage = stageReference.current
 		if (!canvas || !stage) return undefined
 		const box = stage.getBoundingClientRect()
+		const initialLayout = chooseLayout(window.innerWidth, window.innerHeight)
+		const onEngineError = () => setHasFailed(true)
 		let created: RoomEngine
 		try {
 			created = createRoomEngine(canvas, {
-				layout: chooseLayout(window.innerWidth, window.innerHeight),
+				layout: initialLayout,
 				width: box.width,
 				height: box.height,
 				isReducedMotion,
-				dpr: Math.min(window.devicePixelRatio || 1, 2)
+				dpr: Math.min(window.devicePixelRatio || 1, 2),
+				onError: onEngineError
 			})
 		} catch {
 			setHasFailed(true)
@@ -41,10 +44,15 @@ export default function useRoomEngine({
 		}
 		setEngine(created)
 
+		// Rebuilding plates is expensive: only do it when the layout or stage size changed
+		let applied = `${initialLayout}:${box.width}x${box.height}`
 		const onResize = () => {
 			const name = chooseLayout(window.innerWidth, window.innerHeight)
-			setLayoutName(name)
 			const rect = stage.getBoundingClientRect()
+			const next = `${name}:${rect.width}x${rect.height}`
+			if (next === applied) return
+			applied = next
+			setLayoutName(name)
 			created.setLayout(name, rect.width, rect.height)
 		}
 		const resizeObserver = new ResizeObserver(onResize)

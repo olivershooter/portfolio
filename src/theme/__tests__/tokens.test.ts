@@ -5,6 +5,10 @@ import tokens from '../tokens.json'
 
 // Vitest runs from the project root; import.meta.url is an http URL under jsdom
 const css = readFileSync(path.resolve(process.cwd(), 'src/index.css'), 'utf8')
+const lateShiftCss = readFileSync(
+	path.resolve(process.cwd(), 'src/late-shift/lateShift.css'),
+	'utf8'
+)
 
 describe('design tokens', () => {
 	it.each(['light', 'dark'] as const)(
@@ -42,5 +46,16 @@ describe('design tokens', () => {
 		for (const [name, value] of Object.entries(tokens.quick.dark))
 			expect(css).toContain(`--quick-${name}: ${value};`)
 		expect(css).toContain(`--focus: ${tokens.ink.focus};`)
+	})
+
+	it('uses a yellow focus ring on the Late Shift dark surfaces (3:1)', () => {
+		// The night backdrop behind chips/footer and the editor explorer
+		for (const surface of ['#1d1c26', '#2e3a73'])
+			expect(contrastRatio(tokens.ink.yellow, surface)).toBeGreaterThanOrEqual(
+				3
+			)
+		expect(lateShiftCss).toMatch(
+			/\.room-chip:focus-visible,\s*\.late-shift-footer a:focus-visible,\s*\.editor-tab:focus-visible\s*{\s*outline-color: var\(--ink-yellow\);/
+		)
 	})
 })

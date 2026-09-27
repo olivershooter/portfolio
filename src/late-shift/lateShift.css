@@ -22,12 +22,12 @@
 }
 
 .room-stage-desk {
-	width: min(100%, calc((100svh - 7rem) * 1000 / 560));
+	width: min(100%, calc((100svh - 9rem) * 1000 / 560));
 	aspect-ratio: 1000 / 560;
 }
 
 .room-stage-phone {
-	width: min(100%, calc((100svh - 6rem) * 420 / 780));
+	width: min(100%, calc((100svh - 9.5rem) * 420 / 780));
 	aspect-ratio: 420 / 780;
 }
 
@@ -180,7 +180,8 @@
 }
 
 .late-shift-footer {
-	padding: 16px;
+	margin: 0;
+	padding: 0 16px;
 	color: var(--paper);
 	text-align: center;
 }
@@ -582,4 +583,27 @@
 	.room-tag-dot {
 		animation: none;
 	}
+}
+
+/* On phones the chips scroll sideways in one row, so the room, chips and footer fit one screen */
+.room-stage-phone ~ .room-chips {
+	max-width: 100%;
+}
+
+.room-stage-phone ~ .room-chips ul {
+	overflow-x: auto;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	padding-bottom: 4px;
+}
+
+.room-stage-phone ~ .room-chips li {
+	flex: none;
+}
+
+/* The pink-on-paper focus ring is too faint on the dark night backdrop and editor explorer */
+.room-chip:focus-visible,
+.late-shift-footer a:focus-visible,
+.editor-tab:focus-visible {
+	outline-color: var(--ink-yellow);
 }

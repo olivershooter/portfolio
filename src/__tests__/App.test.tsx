@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import App from '../App'
 
@@ -46,5 +47,13 @@ describe('routes', () => {
 				name: 'Software & Android Engineer'
 			})
 		).toBeInTheDocument()
+	})
+
+	it('starts each version at the top of the page', async () => {
+		const user = userEvent.setup()
+		renderApp('/?choose')
+		vi.mocked(window.scrollTo).mockClear()
+		await user.click(screen.getByRole('link', { name: /the quick read/i }))
+		expect(window.scrollTo).toHaveBeenCalledWith(0, 0)
 	})
 })

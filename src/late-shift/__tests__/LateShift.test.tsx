@@ -30,7 +30,8 @@ vi.mock('../audio/lofiRadio', () => ({
 	createLofiRadio: () => ({
 		start: vi.fn(async () => {}),
 		stop: vi.fn(),
-		isPlaying: vi.fn(() => false)
+		isPlaying: vi.fn(() => false),
+		dispose: vi.fn()
 	})
 }))
 

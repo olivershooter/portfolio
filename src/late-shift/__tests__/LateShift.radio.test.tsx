@@ -8,7 +8,8 @@ const { radio } = vi.hoisted(() => ({
 	radio: {
 		start: vi.fn(async () => {}),
 		stop: vi.fn(),
-		isPlaying: vi.fn(() => false)
+		isPlaying: vi.fn(() => false),
+		dispose: vi.fn()
 	}
 }))
 vi.mock('../audio/lofiRadio', () => ({ createLofiRadio: () => radio }))

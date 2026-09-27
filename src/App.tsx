@@ -1,9 +1,18 @@
-import { lazy, Suspense } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import Landing from './pages/Landing'
 import QuickRead from './pages/QuickRead'
 
 const LateShift = lazy(async () => import('./late-shift/LateShift'))
+
+/** Each version starts at the top; moving between Late Shift sections keeps its own scroll. */
+function ScrollToTop() {
+	const version = useLocation().pathname.split('/').find(Boolean) ?? ''
+	useEffect(() => {
+		window.scrollTo(0, 0)
+	}, [version])
+	return null
+}
 
 export default function App() {
 	return (
@@ -12,6 +21,7 @@ export default function App() {
 				<p className='p-8 font-mono text-ink-blue'>Switching on the lamp…</p>
 			}
 		>
+			<ScrollToTop />
 			<Routes>
 				<Route path='/' element={<Landing />} />
 				<Route path='/quick' element={<QuickRead />} />

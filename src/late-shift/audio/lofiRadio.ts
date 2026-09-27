@@ -2,6 +2,8 @@ export interface LofiRadio {
 	readonly start: () => Promise<void>
 	readonly stop: () => void
 	readonly isPlaying: () => boolean
+	/** Stops everything and closes the AudioContext; the radio can start again afterwards. */
+	readonly dispose: () => void
 }
 
 const BPM = 72
@@ -219,10 +221,13 @@ export function createLofiRadio(
 ): LofiRadio {
 	let graph: Graph | null = null
 	let rain: AudioBufferSourceNode | null = null
+	let fading: AudioBufferSourceNode | null = null
 	let timer: number | undefined
 	let step = 0
 	let nextTime = 0
 	let playing = false
+	/** Bumped by every start/stop, so a start that resumed late knows it's stale. */
+	let session = 0
 
 	const tick = () => {
 		if (!graph) return
@@ -233,35 +238,71 @@ export function createLofiRadio(
 		}
 	}
 
+	// Stop every rain loop and the scheduler, so nothing keeps playing unowned
+	const silence = () => {
+		window.clearInterval(timer)
+		timer = undefined
+		rain?.stop()
+		fading?.stop()
+		rain = null
+		fading = null
+	}
+
+	const stop = () => {
+		if (!playing || !graph) return
+		playing = false
+		session += 1
+		window.clearInterval(timer)
+		timer = undefined
+		fadeTo(graph, 0)
+		fading?.stop()
+		fading = rain
+		rain = null
+		const { context } = graph
+		window.setTimeout(
+			() => {
+				if (playing) return
+				fading?.stop()
+				fading = null
+				void context.suspend()
+			},
+			FADE * 1000 + 100
+		)
+	}
+
 	return {
 		start: async () => {
 			if (playing) return
 			// Claim the radio before awaiting, so a second tap can't start it twice
 			playing = true
-			graph ??= buildGraph(makeContext())
-			await graph.context.resume()
+			session += 1
+			const attempt = session
+			try {
+				graph ??= buildGraph(makeContext())
+				await graph.context.resume()
+			} catch (error) {
+				// Only reset if no newer start/stop happened while resuming
+				// eslint-disable-next-line require-atomic-updates -- guarded by the session check
+				if (attempt === session) playing = false
+				throw error
+			}
+			// Stopped (or restarted) while the context was resuming: stay silent
+			if (attempt !== session) return
+			silence()
 			fadeTo(graph, VOLUME)
 			rain = playRain(graph)
 			step = 0
 			nextTime = graph.context.currentTime + 0.05
 			timer = window.setInterval(tick, TICK_MS)
 		},
-		stop: () => {
-			if (!playing || !graph) return
+		stop,
+		isPlaying: () => playing,
+		dispose: () => {
 			playing = false
-			window.clearInterval(timer)
-			fadeTo(graph, 0)
-			const fading = rain
-			rain = null
-			const { context } = graph
-			window.setTimeout(
-				() => {
-					fading?.stop()
-					if (!playing) void context.suspend()
-				},
-				FADE * 1000 + 100
-			)
-		},
-		isPlaying: () => playing
+			session += 1
+			silence()
+			void graph?.context.close()
+			graph = null
+		}
 	}
 }

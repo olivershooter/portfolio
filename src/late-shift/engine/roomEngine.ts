@@ -25,6 +25,8 @@ export interface RoomEngineOptions {
 	readonly height: number
 	readonly isReducedMotion: boolean
 	readonly dpr: number
+	/** Called once if drawing throws; the engine stops itself first. */
+	readonly onError?: (error: unknown) => void
 }
 
 /** Reduced motion renders a single, fixed moment of the animation. */
@@ -91,7 +93,16 @@ export function createRoomEngine(
 		compositor.render(time, layout, (ink, g) => drawRoom(ink, g, time, state))
 	}
 
-	const loop = startLoop(frame)
+	let loop: ReturnType<typeof startLoop> | null = null
+	const safeFrame = (seconds: number, dt: number) => {
+		try {
+			frame(seconds, dt)
+		} catch (error) {
+			loop?.stop()
+			options.onError?.(error)
+		}
+	}
+	loop = startLoop(safeFrame)
 
 	return {
 		setLayout: (name, width, height) => {
