@@ -25,7 +25,8 @@ export default function LateShift() {
 	const isReducedMotion = useReducedMotion()
 	const navigate = useNavigate()
 	const [searchParameters] = useSearchParams()
-	const path = useParams()['*'] ?? ''
+	// A trailing slash (/late-shift/about/) still means the same section
+	const path = (useParams()['*'] ?? '').replace(/\/+$/, '')
 	const section: SectionId | null = isSectionId(path) ? path : null
 	const canvasReference = useRef<HTMLCanvasElement>(null)
 	const stageReference = useRef<HTMLDivElement>(null)
@@ -49,7 +50,10 @@ export default function LateShift() {
 	const pendingFocus = useRef<ObjectId | null>(null)
 	const opener = useRef<HTMLElement | null>(null)
 	const hasArrived = useRef(false)
-	const isInitial = useRef(true)
+	// Arriving by URL jumps straight in; only cleared once that first arrival lands,
+	// so StrictMode's double-run in development still jumps
+	const isDeepLink = useRef(section !== null)
+	const hasFailedReference = useRef(hasFailed)
 	const spacerReference = useRef<HTMLDivElement>(null)
 	const [isScrubEnabled, setIsScrubEnabled] = useState(true)
 	const onScrubProgress = useCallback(
@@ -88,9 +92,11 @@ export default function LateShift() {
 	}, [engine, searchParameters])
 
 	useEffect(() => {
+		hasFailedReference.current = hasFailed
+	}, [hasFailed])
+
+	useEffect(() => {
 		let isCancelled = false
-		const isFirst = isInitial.current
-		isInitial.current = false
 		const previous = cameraObject.current
 		if (section === null) {
 			setPageSection(null)
@@ -99,7 +105,10 @@ export default function LateShift() {
 			if (previous !== null) {
 				setIsScrubEnabled(false)
 				window.scrollTo({ top: 0 })
-				const leave = hasFailed ? jumpTo(previous, 0) : flyTo(previous, 0)
+				isDeepLink.current = false
+				const leave = hasFailedReference.current
+					? jumpTo(previous, 0)
+					: flyTo(previous, 0)
 				void leave.then(() => {
 					if (isCancelled) return
 					cameraObject.current = null
@@ -114,20 +123,25 @@ export default function LateShift() {
 		}
 		const target = objectForSection(section)
 		setIsScrubEnabled(false)
-		track('section-opened', { section, version: 'late-shift' })
 		cameraObject.current = target
 		setIsZoomed(true)
 		setPageSection(null)
-		const arrive = isFirst || hasFailed ? jumpTo(target, 1) : flyTo(target, 1)
+		const arrive =
+			isDeepLink.current || hasFailedReference.current
+				? jumpTo(target, 1)
+				: flyTo(target, 1)
 		void arrive.then(() => {
 			if (isCancelled) return
+			isDeepLink.current = false
+			// Counted on arrival, so superseded or StrictMode-cancelled opens aren't
+			track('section-opened', { section, version: 'late-shift' })
 			setPageSection(section)
 			setCovered(true)
 		})
 		return () => {
 			isCancelled = true
 		}
-	}, [section, flyTo, jumpTo, setCovered, hasFailed])
+	}, [section, flyTo, jumpTo, setCovered])
 
 	useEffect(() => {
 		if (isZoomed || pendingFocus.current === null) return
