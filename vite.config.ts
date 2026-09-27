@@ -47,8 +47,19 @@ export default defineConfig(({ mode }) => ({
 					eslintPlugin(),
 					VitePWA({
 						registerType: 'autoUpdate',
-						includeAssets: ['favicon.png', 'icons/*.svg', 'fonts/*.woff2']
+						includeAssets: ['favicon.png'],
+						workbox: {
+							// Images (~4 MB) load lazily on demand; precache only the app shell and Latin fonts
+							globPatterns: ['**/*.{js,css,html}', 'assets/*-latin-*.woff2']
+						}
 					})
 				])
-	]
+	],
+	build: {
+		rollupOptions: {
+			output: {
+				manualChunks: { gsap: ['gsap'] }
+			}
+		}
+	}
 }))
