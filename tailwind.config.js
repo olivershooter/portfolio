@@ -1,31 +1,34 @@
+import tokens from './src/theme/tokens.json'
+
 /** @type {import('tailwindcss').Config} */
 export default {
 	content: ['./index.html', './src/**/*.{ts,tsx}'],
 	theme: {
 		extend: {
 			colors: {
-				primary: '#E8FF47',
-				'primary-dark': '#C8DF27',
-				bg: '#0A0A0A',
-				surface: '#131313',
-				'surface-high': '#1E1E1E',
-				'surface-highest': '#262626',
-				'text-base': '#F0F0F0',
-				'text-muted': '#666666',
-				outline: '#2A2A2A'
+				paper: tokens.ink.paper,
+				ink: {
+					blue: tokens.ink.blue,
+					pink: tokens.ink.pink,
+					yellow: tokens.ink.yellow,
+					text: tokens.ink.text,
+					focus: tokens.ink.focus
+				},
+				quick: {
+					bg: 'var(--quick-bg)',
+					text: 'var(--quick-text)',
+					muted: 'var(--quick-muted)',
+					link: 'var(--quick-link)',
+					rule: 'var(--quick-rule)',
+					focus: 'var(--quick-focus)'
+				}
 			},
 			fontFamily: {
-				headline: ['Syne', 'sans-serif'],
-				body: ['DM Sans', 'sans-serif'],
-				mono: ['JetBrains Mono', 'monospace']
-			},
-			borderRadius: {
-				DEFAULT: '0px',
-				none: '0px',
-				full: '9999px'
+				display: ['"Archivo Black"', 'system-ui', 'sans-serif'],
+				body: ['"DM Sans"', 'system-ui', 'sans-serif'],
+				mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
 			}
 		}
 	},
-	safelist: ['col-span-1', 'col-span-2'],
 	plugins: []
 }

@@ -3,78 +3,60 @@
 @tailwind utilities;
 
 :root {
-	--bg: #0a0a0a;
-	--surface: #131313;
-	--surface-high: #1e1e1e;
-	--surface-highest: #262626;
-	--primary: #e8ff47;
-	--primary-dark: #c8df27;
-	--text: #f0f0f0;
-	--text-muted: #666666;
-	--outline: #2a2a2a;
+	--paper: #f4ecdd;
+	--ink-blue: #3255a4;
+	--ink-pink: #ff48b0;
+	--ink-yellow: #ffe200;
+	--ink-text: #22223a;
+	--focus: #c2187a;
+	--quick-bg: #fbf8f2;
+	--quick-text: #1f2233;
+	--quick-muted: #3d4054;
+	--quick-link: #2a4a9a;
+	--quick-rule: #1f2233;
+	--quick-focus: #c2187a;
 }
 
-* {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
+@media (prefers-color-scheme: dark) {
+	.quick {
+		--quick-bg: #16171f;
+		--quick-text: #ecebf2;
+		--quick-muted: #c4c3d0;
+		--quick-link: #9db4ff;
+		--quick-rule: #ecebf2;
+		--quick-focus: #ff48b0;
+	}
 }
 
 html {
-	background: var(--bg);
-	color: var(--text);
-	font-family: 'DM Sans', sans-serif;
-	overflow-x: hidden;
+	background: var(--paper);
+	color: var(--ink-text);
+	font-family: 'DM Sans', system-ui, sans-serif;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-	width: 3px;
-}
-::-webkit-scrollbar-track {
-	background: var(--bg);
-}
-::-webkit-scrollbar-thumb {
-	background: var(--outline);
-}
-::-webkit-scrollbar-thumb:hover {
-	background: var(--primary);
+:focus-visible {
+	outline: 3px solid var(--focus);
+	outline-offset: 3px;
 }
 
-/* Selection */
-::selection {
-	background: var(--primary);
-	color: var(--bg);
+.quick :focus-visible {
+	outline-color: var(--quick-focus);
 }
 
-/* Scanline texture overlay */
-.scanline::after {
-	content: '';
-	position: fixed;
-	inset: 0;
-	background: repeating-linear-gradient(
-		0deg,
-		transparent,
-		transparent 2px,
-		rgba(0, 0, 0, 0.03) 2px,
-		rgba(0, 0, 0, 0.03) 4px
-	);
-	pointer-events: none;
-	z-index: 9999;
+.quick-link {
+	color: var(--quick-link);
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 3px;
 }
 
-/* Kinetic grid */
-.kinetic-grid {
-	background-image: linear-gradient(
-			to right,
-			rgba(255, 255, 255, 0.03) 1px,
-			transparent 1px
-		),
-		linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-	background-size: 48px 48px;
-}
-
-/* Typography */
-.font-headline {
-	font-family: 'Syne', sans-serif;
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+	}
 }

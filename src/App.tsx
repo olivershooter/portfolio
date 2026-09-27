@@ -1,24 +1,23 @@
-import Nav from './components/Nav'
-import Hero from './components/Hero'
-import About from './components/About'
-import Experience from './components/Experience'
-import Projects from './components/Projects'
-import Skills from './components/Skills'
-import Contact from './components/Contact'
+import { lazy, Suspense } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import Landing from './pages/Landing'
+import QuickRead from './pages/QuickRead'
+
+const LateShift = lazy(async () => import('./late-shift/LateShift'))
 
 export default function App() {
 	return (
-		<div className='scanline bg-bg text-text-base'>
-			<div className='kinetic-grid pointer-events-none fixed inset-0 z-0' />
-			<Nav />
-			<main>
-				<Hero />
-				<About />
-				<Experience />
-				<Projects />
-				<Skills />
-				<Contact />
-			</main>
-		</div>
+		<Suspense
+			fallback={
+				<p className='p-8 font-mono text-ink-blue'>Switching on the lamp…</p>
+			}
+		>
+			<Routes>
+				<Route path='/' element={<Landing />} />
+				<Route path='/quick' element={<QuickRead />} />
+				<Route path='/late-shift/*' element={<LateShift />} />
+				<Route path='*' element={<Navigate to='/' replace />} />
+			</Routes>
+		</Suspense>
 	)
 }

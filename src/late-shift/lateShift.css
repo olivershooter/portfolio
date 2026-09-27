@@ -1,0 +1,5 @@
+.late-shift {
+	min-height: 100svh;
+	background: var(--paper);
+	color: var(--ink-text);
+}
