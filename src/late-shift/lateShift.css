@@ -16,6 +16,7 @@
 
 .room-stage {
 	position: relative;
+	container-type: inline-size;
 	overflow: hidden;
 	border-radius: 8px;
 	background: var(--paper);
@@ -606,4 +607,29 @@
 .late-shift-footer a:focus-visible,
 .editor-tab:focus-visible {
 	outline-color: var(--ink-yellow);
+}
+
+/* On narrower stages the hint would cover the Contact tag: move it to the empty desk */
+@container (width < 980px) {
+	.room-hint {
+		top: auto;
+		bottom: 12px;
+	}
+}
+
+@media (width < 700px) {
+	.film-strip {
+		overflow-x: visible;
+	}
+
+	.film-strip ol {
+		flex-direction: column;
+	}
+}
+
+/* Reduced motion: no camera flight, but the page still fades in (opacity only) */
+@media (prefers-reduced-motion: reduce) {
+	.late-shift .section-page {
+		animation-duration: 0.2s !important;
+	}
 }

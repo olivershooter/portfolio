@@ -224,7 +224,11 @@ export default function LateShift() {
 				</div>
 			</div>
 			{pageSection ? (
-				<SectionPage section={pageSection} onClose={onClose} />
+				<SectionPage
+					section={pageSection}
+					onClose={onClose}
+					isScrubExit={pageSection === 'android' && !isReducedMotion}
+				/>
 			) : null}
 		</main>
 	)

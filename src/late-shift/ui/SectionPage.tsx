@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type TouchEvent, type WheelEvent } from 'react'
 import { Link } from 'react-router-dom'
 import SwitchVersionLink from '../../components/SwitchVersionLink'
 import type { SectionId } from '../sectionIds'
@@ -9,16 +9,40 @@ import useFocusTrap from './useFocusTrap'
 interface SectionPageProperties {
 	readonly section: SectionId
 	readonly onClose: () => void
+	/** The reverse of the scroll-scrub: scrolling up at the top leaves the section. */
+	readonly isScrubExit?: boolean
 }
+
+/** Pixels of downward swipe at the top that count as "scroll back up". */
+const SWIPE_EXIT = 48
 
 export default function SectionPage({
 	section,
-	onClose
+	onClose,
+	isScrubExit = false
 }: SectionPageProperties) {
 	const entry = SECTIONS[section]
 	const dialogReference = useRef<HTMLDivElement>(null)
 	const headingReference = useRef<HTMLHeadingElement>(null)
+	const touchStart = useRef<number | null>(null)
 	useFocusTrap(dialogReference, onClose)
+
+	const isAtTop = () => (dialogReference.current?.scrollTop ?? 0) <= 0
+	const onWheel = (event: WheelEvent<HTMLDivElement>) => {
+		if (isScrubExit && event.deltaY < 0 && isAtTop()) onClose()
+	}
+	const onTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+		touchStart.current =
+			event.touches.length > 0 ? event.touches[0].clientY : null
+	}
+	const onTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+		const start = touchStart.current
+		if (!isScrubExit || start === null || event.touches.length === 0) return
+		if (event.touches[0].clientY - start > SWIPE_EXIT && isAtTop()) {
+			touchStart.current = null
+			onClose()
+		}
+	}
 
 	useEffect(() => {
 		headingReference.current?.focus()
@@ -39,6 +63,9 @@ export default function SectionPage({
 			aria-modal='true'
 			aria-labelledby='section-title'
 			className={`section-page skin-${entry.skin}`}
+			onWheel={onWheel}
+			onTouchStart={onTouchStart}
+			onTouchMove={onTouchMove}
 		>
 			<div className='section-page-inner'>
 				<button type='button' className='section-back' onClick={onClose}>
