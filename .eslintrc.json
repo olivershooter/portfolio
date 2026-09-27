@@ -48,7 +48,9 @@
 		"@typescript-eslint/init-declarations": "off",
 		"@typescript-eslint/no-confusing-void-expression": [
 			"error",
-			{ "ignoreArrowShorthand": true }
+			{
+				"ignoreArrowShorthand": true
+			}
 		],
 		"no-console": "off",
 		"@typescript-eslint/non-nullable-type-assertion-style": "off",
@@ -57,7 +59,6 @@
 		"@typescript-eslint/member-ordering": "off",
 		"@typescript-eslint/prefer-includes": "off",
 		"@typescript-eslint/no-restricted-imports": "off",
-
 		"import/no-deprecated": "error",
 		"import/order": "off",
 		"import/no-extraneous-dependencies": [
@@ -72,7 +73,6 @@
 				]
 			}
 		],
-
 		"react/no-did-update-set-state": "off",
 		"react/no-find-dom-node": "off",
 		"react/no-is-mounted": "off",
@@ -88,7 +88,6 @@
 		"react/sort-comp": "off",
 		"react/state-in-constructor": "off",
 		"react/static-property-placement": "off",
-
 		"react/boolean-prop-naming": [
 			"error",
 			{
@@ -120,7 +119,6 @@
 		"react/jsx-no-constructed-context-values": "error",
 		"react/jsx-no-script-url": "error",
 		"react/jsx-no-useless-fragment": "error",
-
 		"unicorn/filename-case": [
 			"error",
 			{
@@ -130,7 +128,16 @@
 				}
 			}
 		],
-		"unicorn/no-nested-ternary": ["error"]
+		"unicorn/no-nested-ternary": ["error"],
+		"unicorn/no-null": "off",
+		"unicorn/no-useless-undefined": "off",
+		"import/prefer-default-export": "off",
+		"no-restricted-syntax": [
+			"error",
+			"ForInStatement",
+			"LabeledStatement",
+			"WithStatement"
+		]
 	},
 	"settings": {
 		"react": {
@@ -163,6 +170,24 @@
 				"testing-library/no-manual-cleanup": "error",
 				"testing-library/prefer-explicit-assert": "error",
 				"testing-library/prefer-user-event": "error"
+			}
+		},
+		{
+			"files": [
+				"src/late-shift/engine/**/*.ts",
+				"src/late-shift/scene/**/*.ts",
+				"src/late-shift/audio/**/*.ts"
+			],
+			"rules": {
+				"no-bitwise": "off",
+				"no-param-reassign": [
+					"error",
+					{
+						"props": false
+					}
+				],
+				"unicorn/prefer-math-trunc": "off",
+				"@typescript-eslint/max-params": "off"
 			}
 		}
 	]

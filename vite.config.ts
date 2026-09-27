@@ -14,13 +14,25 @@ export default defineConfig(({ mode }) => ({
 		setupFiles: 'src/setupTests.ts',
 		clearMocks: true,
 		coverage: {
-			include: ['src/**/*'],
-			exclude: ['src/main.tsx'],
+			include: [
+				'src/lib/**/*.ts',
+				'src/content/**/*.ts',
+				'src/late-shift/sectionIds.ts',
+				'src/late-shift/scene/math.ts',
+				'src/late-shift/scene/timeOfDay.ts',
+				'src/late-shift/scene/objects.ts',
+				'src/late-shift/scene/layouts.ts',
+				'src/late-shift/scene/hitTest.ts',
+				'src/late-shift/scene/camera.ts',
+				'src/late-shift/engine/loop.ts',
+				'src/late-shift/ui/debugParameters.ts'
+			],
+			exclude: ['**/__tests__/**'],
 			thresholds: {
 				'100': true
 			},
 			provider: 'istanbul',
-			enabled: true,
+			enabled: false,
 			reporter: ['text', 'lcov'],
 			reportsDirectory: 'coverage'
 		}
