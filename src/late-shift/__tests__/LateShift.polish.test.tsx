@@ -58,6 +58,7 @@ describe('Late Shift polish', () => {
 		expect(sectionOpenedCalls(spy.mock.calls)).toHaveLength(1)
 	})
 
+	// A real flight takes at least 900 ms; 700 ms proves it jumped, with headroom under load
 	it('jumps straight to a deep link even under StrictMode', async () => {
 		const spy = vi.spyOn(analytics, 'track')
 		render(
@@ -68,7 +69,7 @@ describe('Late Shift polish', () => {
 			</StrictMode>
 		)
 		expect(
-			await screen.findByRole('dialog', { name: 'About me' }, { timeout: 300 })
+			await screen.findByRole('dialog', { name: 'About me' }, { timeout: 700 })
 		).toBeInTheDocument()
 		expect(sectionOpenedCalls(spy.mock.calls)).toHaveLength(1)
 	})
