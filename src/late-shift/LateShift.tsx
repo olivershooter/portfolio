@@ -1,12 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import {
+	Link,
+	Navigate,
+	useNavigate,
+	useParams,
+	useSearchParams
+} from 'react-router-dom'
 import SwitchVersionLink from '../components/SwitchVersionLink'
 import { track } from '../lib/analytics'
 import useReducedMotion from '../lib/useReducedMotion'
-import { getRoomObject, type ObjectId } from './scene/objects'
+import { getRoomObject, objectForSection, type ObjectId } from './scene/objects'
+import { isSectionId, type SectionId } from './sectionIds'
 import { hoverFromSearch, todFromSearch } from './ui/debugParameters'
 import RoomStage from './ui/RoomStage'
 import SectionChips from './ui/SectionChips'
+import SectionPage from './ui/SectionPage'
+import useCameraTween from './ui/useCameraTween'
 import useRoomEngine from './ui/useRoomEngine'
 import './lateShift.css'
 
@@ -14,17 +23,25 @@ export default function LateShift() {
 	const isReducedMotion = useReducedMotion()
 	const navigate = useNavigate()
 	const [searchParameters] = useSearchParams()
+	const path = useParams()['*'] ?? ''
+	const section: SectionId | null = isSectionId(path) ? path : null
 	const canvasReference = useRef<HTMLCanvasElement>(null)
 	const stageReference = useRef<HTMLDivElement>(null)
-	const { engine, layoutName, hasFailed } = useRoomEngine({
+	const { engine, layoutName, hasFailed, setCovered } = useRoomEngine({
 		canvasReference,
 		stageReference,
 		isReducedMotion
 	})
+	const { flyTo, jumpTo } = useCameraTween(engine, isReducedMotion)
 	const [hovered, setHovered] = useState<ObjectId | null>(null)
 	const [highlighted, setHighlighted] = useState<ObjectId | null>(null)
 	const [isRadioOn, setIsRadioOn] = useState(false)
 	const [isHintVisible, setIsHintVisible] = useState(true)
+	const [pageSection, setPageSection] = useState<SectionId | null>(null)
+	const [isZoomed, setIsZoomed] = useState(false)
+	const cameraObject = useRef<ObjectId | null>(null)
+	const pendingFocus = useRef<ObjectId | null>(null)
+	const isInitial = useRef(true)
 
 	useEffect(() => {
 		engine?.setHover(hovered)
@@ -39,22 +56,71 @@ export default function LateShift() {
 		engine?.setTodMode(todFromSearch(searchParameters))
 	}, [engine, searchParameters])
 
+	useEffect(() => {
+		let isCancelled = false
+		const isFirst = isInitial.current
+		isInitial.current = false
+		const previous = cameraObject.current
+		if (section === null) {
+			setPageSection(null)
+			setCovered(false)
+			if (previous !== null) {
+				void flyTo(previous, 0).then(() => {
+					if (isCancelled) return
+					cameraObject.current = null
+					pendingFocus.current = previous
+					setIsZoomed(false)
+				})
+			}
+			return () => {
+				isCancelled = true
+			}
+		}
+		const target = objectForSection(section)
+		track('section-opened', { section, version: 'late-shift' })
+		cameraObject.current = target
+		setIsZoomed(true)
+		setPageSection(null)
+		const arrive = isFirst || hasFailed ? jumpTo(target, 1) : flyTo(target, 1)
+		void arrive.then(() => {
+			if (isCancelled) return
+			setPageSection(section)
+			setCovered(true)
+		})
+		return () => {
+			isCancelled = true
+		}
+	}, [section, flyTo, jumpTo, setCovered, hasFailed])
+
+	useEffect(() => {
+		if (isZoomed || pendingFocus.current === null) return
+		document
+			.querySelector<HTMLElement>(`[data-object="${pendingFocus.current}"]`)
+			?.focus()
+		pendingFocus.current = null
+	}, [isZoomed])
+
 	const onActivate = useCallback(
 		(id: ObjectId) => {
 			setIsHintVisible(false)
-			const { section } = getRoomObject(id)
-			if (section === null) {
+			const object = getRoomObject(id)
+			if (object.section === null) {
 				const next = !isRadioOn
 				setIsRadioOn(next)
 				track('radio-toggled', { on: next })
 				return
 			}
-			navigate(`/late-shift/${section}`)
+			navigate(`/late-shift/${object.section}`)
 		},
 		[isRadioOn, navigate]
 	)
+	const onClose = useCallback(() => navigate('/late-shift'), [navigate])
 	const onHover = setHovered
+	const isStageZoomed = isZoomed && pageSection !== null
 	const onHighlight = setHighlighted
+
+	if (path !== '' && section === null)
+		return <Navigate to='/late-shift' replace />
 
 	return (
 		<main className='late-shift' data-scroll='static'>
@@ -69,7 +135,7 @@ export default function LateShift() {
 					layoutName={layoutName}
 					canvasReference={canvasReference}
 					stageReference={stageReference}
-					isZoomed={false}
+					isZoomed={isStageZoomed}
 					hasFailed={hasFailed}
 					isHintVisible={isHintVisible}
 					isRadioOn={isRadioOn}
@@ -91,6 +157,9 @@ export default function LateShift() {
 				<span aria-hidden='true'> · </span>
 				<SwitchVersionLink />
 			</p>
+			{pageSection ? (
+				<SectionPage section={pageSection} onClose={onClose} />
+			) : null}
 		</main>
 	)
 }
