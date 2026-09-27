@@ -9,4 +9,5 @@ coverage
 .stylelintcache
 cypress/videos
 .cursorrules
-.remember/.superpowers/
+.remember/
+.superpowers/
