@@ -52,13 +52,17 @@ export function createRoomEngine(
 	let radioOn = false
 	let reelAngle = 0
 	let dirty = true
+	let drawnTod = ''
 
 	void document.fonts.load('16px "Archivo Black"').then(() => {
 		dirty = true
 	})
 
 	const frame = (seconds: number, dt: number) => {
-		const target = TOD[resolveTod(todMode, new Date())]
+		const todName = resolveTod(todMode, new Date())
+		// The still (reduced-motion) room only redraws when dirty: a new time of day counts
+		if (todName !== drawnTod) dirty = true
+		const target = TOD[todName]
 		tod = options.isReducedMotion
 			? target
 			: approachTod(tod, target, 1 - Math.exp(-dt * 2.5))
@@ -75,6 +79,7 @@ export function createRoomEngine(
 		if (radioOn) reelAngle += dt * 5
 		if (options.isReducedMotion && !dirty && !isSettling) return
 		dirty = false
+		drawnTod = todName
 		const time = options.isReducedMotion ? STATIC_TIME : seconds
 		const state: RoomRenderState = {
 			layout,

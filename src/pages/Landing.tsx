@@ -45,7 +45,8 @@ export default function Landing() {
 						to='/late-shift'
 						onClick={onChooseLateShift}
 						className='door'
-						aria-describedby='door-late-shift-text'
+						aria-labelledby='door-late-shift-title'
+						aria-describedby='door-late-shift-text door-late-shift-meta'
 					>
 						<span className='door-preview door-room' aria-hidden='true'>
 							<span className='door-room-window' />
@@ -53,12 +54,14 @@ export default function Landing() {
 							<span className='door-room-phone' />
 							<span className='door-room-lamp' />
 						</span>
-						<span className='door-title'>The Late Shift →</span>
+						<span id='door-late-shift-title' className='door-title'>
+							The Late Shift →
+						</span>
 						<span id='door-late-shift-text' className='door-text'>
 							Step into my room: an interactive lofi scene with things to click,
 							rain on the window and an optional radio.
 						</span>
-						<span className='door-meta'>
+						<span id='door-late-shift-meta' className='door-meta'>
 							Works on desktop &amp; mobile · Sound optional · ~2 min
 						</span>
 					</Link>
@@ -68,7 +71,8 @@ export default function Landing() {
 						to='/quick'
 						onClick={onChooseQuick}
 						className='door'
-						aria-describedby='door-quick-text'
+						aria-labelledby='door-quick-title'
+						aria-describedby='door-quick-text door-quick-meta'
 					>
 						<span className='door-preview door-plain' aria-hidden='true'>
 							<i />
@@ -77,12 +81,14 @@ export default function Landing() {
 							<i />
 							<i />
 						</span>
-						<span className='door-title'>The Quick Read →</span>
+						<span id='door-quick-title' className='door-title'>
+							The Quick Read →
+						</span>
 						<span id='door-quick-text' className='door-text'>
 							Everything on one clean page. Fast, keyboard and screen-reader
 							friendly, WCAG 2.2 AA.
 						</span>
-						<span className='door-meta'>Any device · No motion · ~30 sec</span>
+						<span id='door-quick-meta' className='door-meta'>Any device · No motion · ~30 sec</span>
 					</Link>
 				</li>
 			</ul>

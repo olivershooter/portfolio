@@ -18,9 +18,11 @@ export default function useFocusTrap(
 			}
 			if (event.key !== 'Tab') return
 			const items = [...container.querySelectorAll<HTMLElement>(FOCUSABLE)]
-			const first = items.at(0)
-			const last = items.at(-1)
-			if (!first || !last) return
+			if (items.length === 0) return
+			// Plain indexing, not .at(): Safari only has .at() from 15.4
+			const [first] = items
+			// eslint-disable-next-line unicorn/prefer-at -- see above
+			const last = items[items.length - 1]
 			if (event.shiftKey && document.activeElement === first) {
 				event.preventDefault()
 				last.focus()

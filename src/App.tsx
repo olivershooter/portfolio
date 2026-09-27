@@ -1,9 +1,15 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import Landing from './pages/Landing'
+import LateShiftUnavailable from './pages/LateShiftUnavailable'
 import QuickRead from './pages/QuickRead'
 
-const LateShift = lazy(async () => import('./late-shift/LateShift'))
+// A failed chunk download shows a way forward instead of a blank page
+const LateShift = lazy(async () =>
+	import('./late-shift/LateShift').catch(() => ({
+		default: LateShiftUnavailable
+	}))
+)
 
 /** Each version starts at the top; moving between Late Shift sections keeps its own scroll. */
 function ScrollToTop() {

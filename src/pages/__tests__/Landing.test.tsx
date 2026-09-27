@@ -65,4 +65,12 @@ describe('Landing', () => {
 		renderRoute('/', routes)
 		expect(await axeViolations()).toEqual([])
 	})
+
+	it('names each door by its title and reads its description once', () => {
+		renderRoute('/', routes)
+		const lateShift = screen.getByRole('link', { name: 'The Late Shift →' })
+		expect(lateShift).toHaveAccessibleDescription(/step into my room/i)
+		const quick = screen.getByRole('link', { name: 'The Quick Read →' })
+		expect(quick).toHaveAccessibleDescription(/everything on one clean page/i)
+	})
 })
