@@ -25,7 +25,8 @@ export default defineConfig(({ mode }) => ({
 				'src/late-shift/scene/hitTest.ts',
 				'src/late-shift/scene/camera.ts',
 				'src/late-shift/engine/loop.ts',
-				'src/late-shift/ui/debugParameters.ts'
+				'src/late-shift/ui/debugParameters.ts',
+				'src/late-shift/ui/useScrollIntoPhone.ts'
 			],
 			exclude: ['**/__tests__/**'],
 			thresholds: {

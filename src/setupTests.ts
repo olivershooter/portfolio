@@ -23,6 +23,15 @@ vi.stubGlobal('localStorage', jsdom.window.localStorage)
 vi.stubGlobal('sessionStorage', jsdom.window.sessionStorage)
 vi.stubGlobal('ResizeObserver', ObserverStub)
 vi.stubGlobal('IntersectionObserver', ObserverStub)
+vi.stubGlobal('scrollTo', vi.fn())
+
+// ScrollTrigger needs real layout; components get a no-op hook, scrubAction stays real
+vi.mock('./late-shift/ui/useScrollIntoPhone', async importOriginal => ({
+	...(await importOriginal<
+		typeof import('./late-shift/ui/useScrollIntoPhone')
+	>()),
+	default: vi.fn()
+}))
 
 beforeEach(() => {
 	setReducedMotion(false)

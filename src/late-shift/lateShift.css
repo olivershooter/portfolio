@@ -567,3 +567,19 @@
 		opacity: 0;
 	}
 }
+
+.late-shift[data-scroll='scrub'] .room-scroll {
+	height: 200svh;
+}
+
+.late-shift[data-scroll='scrub'] .room-sticky {
+	position: sticky;
+	top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.room-tag,
+	.room-tag-dot {
+		animation: none;
+	}
+}
