@@ -25,6 +25,14 @@ const { engine, createRoomEngine } = vi.hoisted(() => {
 })
 
 vi.mock('../engine/roomEngine', () => ({ createRoomEngine }))
+// jsdom has no AudioContext; the real radio would reject when started
+vi.mock('../audio/lofiRadio', () => ({
+	createLofiRadio: () => ({
+		start: vi.fn(async () => {}),
+		stop: vi.fn(),
+		isPlaying: vi.fn(() => false)
+	})
+}))
 
 const routes = <Route path='/late-shift/*' element={<LateShift />} />
 

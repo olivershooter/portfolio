@@ -16,6 +16,7 @@ import RoomStage from './ui/RoomStage'
 import SectionChips from './ui/SectionChips'
 import SectionPage from './ui/SectionPage'
 import useCameraTween from './ui/useCameraTween'
+import useLofiRadio from './ui/useLofiRadio'
 import useRoomEngine from './ui/useRoomEngine'
 import useScrollIntoPhone from './ui/useScrollIntoPhone'
 import './lateShift.css'
@@ -36,7 +37,11 @@ export default function LateShift() {
 	const { flyTo, jumpTo } = useCameraTween(engine, isReducedMotion)
 	const [hovered, setHovered] = useState<ObjectId | null>(null)
 	const [highlighted, setHighlighted] = useState<ObjectId | null>(null)
-	const [isRadioOn, setIsRadioOn] = useState(false)
+	const {
+		isOn: isRadioOn,
+		wasOn: wasRadioOn,
+		onToggle: onRadioToggle
+	} = useLofiRadio()
 	const [isHintVisible, setIsHintVisible] = useState(true)
 	const [pageSection, setPageSection] = useState<SectionId | null>(null)
 	const [isZoomed, setIsZoomed] = useState(false)
@@ -131,14 +136,12 @@ export default function LateShift() {
 			setIsHintVisible(false)
 			const object = getRoomObject(id)
 			if (object.section === null) {
-				const next = !isRadioOn
-				setIsRadioOn(next)
-				track('radio-toggled', { on: next })
+				onRadioToggle()
 				return
 			}
 			navigate(`/late-shift/${object.section}`)
 		},
-		[isRadioOn, navigate]
+		[navigate, onRadioToggle]
 	)
 	const onClose = useCallback(() => navigate('/late-shift'), [navigate])
 	const onHover = setHovered
@@ -169,6 +172,7 @@ export default function LateShift() {
 						hasFailed={hasFailed}
 						isHintVisible={isHintVisible}
 						isRadioOn={isRadioOn}
+						hasPausedRadio={wasRadioOn}
 						highlighted={highlighted}
 						hovered={hovered}
 						onHover={onHover}
