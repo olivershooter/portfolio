@@ -11,7 +11,8 @@ export const profile: Profile = {
 		"Looking for engineering roles where the problems are hard and the team gives a damn. If that sounds like yours, I'd like to hear about it.",
 	links: {
 		github: 'https://github.com/olivershooter',
-		site: 'https://olivershooter.com'
+		site: 'https://olivershooter.com',
+		linkedin: 'https://www.linkedin.com/in/olivershooter'
 	},
 	story: [
 		{
@@ -25,7 +26,7 @@ export const profile: Profile = {
 			text: 'MSc Computer Science at the University of Birmingham.'
 		},
 		{
-			year: '2021',
+			year: '2022',
 			title: 'Government',
 			text: 'Joined Government as a junior engineer and started shipping.'
 		},
