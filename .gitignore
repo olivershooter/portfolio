@@ -1,7 +1,6 @@
 .gradle/
 .kotlin/
 build/
-dist
 .DS_Store
 *.local
 .cursorrules

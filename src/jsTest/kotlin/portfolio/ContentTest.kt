@@ -10,8 +10,7 @@ import kotlin.test.assertTrue
 
 class ContentTest {
 	@Test
-	fun hasTheFilmAndStudyBeatsTheHomePageReads() {
-		assertTrue(profile.story.size >= 2)
+	fun readsTheCityFromTheLocation() {
 		assertEquals("Manchester", profile.city)
 	}
 

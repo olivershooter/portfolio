@@ -28,9 +28,3 @@ kotlin {
 		}
 	}
 }
-
-// Caddy serves dist/, the same folder the old Vite build wrote to
-tasks.register<Sync>("dist") {
-	from(tasks.named("jsBrowserDistribution"))
-	into(layout.projectDirectory.dir("dist"))
-}

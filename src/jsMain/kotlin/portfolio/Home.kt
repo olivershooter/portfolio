@@ -64,7 +64,6 @@ private fun HomeSection(id: String, title: String, content: ContentBuilder<HTMLE
 @Composable
 fun Home() {
 	val (firstName, lastName) = profile.name.split(' ', limit = 2)
-	val (film, study) = profile.story
 
 	Div({ classes("home") }) {
 		A("#main", { classes("home-skip") }) { Text("Skip to content") }
@@ -111,9 +110,9 @@ fun Home() {
 					}
 				}
 				Article {
-					P({ classes("home-muted") }) { Text("${film.year} to ${study.year}") }
-					H3({ classes("home-display", "home-org") }) { Text(film.title) }
-					P({ classes("home-gap") }) { Text("${film.text} ${study.text}") }
+					P({ classes("home-muted") }) { Text(profile.before.year) }
+					H3({ classes("home-display", "home-org") }) { Text(profile.before.title) }
+					P({ classes("home-gap") }) { Text(profile.before.text) }
 				}
 			}
 

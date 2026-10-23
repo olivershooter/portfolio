@@ -6,7 +6,6 @@ data class Role(
 	val org: String,
 	val period: String,
 	val bullets: List<String>,
-	val stack: List<String>,
 )
 
 val experience = listOf(
@@ -21,7 +20,6 @@ val experience = listOf(
 			"Work across design, product and backend to keep the front end consistent across projects.",
 			"Have a say in technical direction, and mentor other engineers when I can.",
 		),
-		stack = listOf("Kotlin", "Jetpack Compose", "React", "TypeScript", "Next.js"),
 	),
 	Role(
 		id = "government-se",
@@ -34,7 +32,6 @@ val experience = listOf(
 			"Wrote middleware that automates manual workflows between two internal services. MongoDB-backed, runs on OKD.",
 			"Broke apart a monolithic monitoring stack into microservices with Helm, Kubernetes, Grafana, Loki, Mimir, and Tempo.",
 		),
-		stack = listOf("React", "FastAPI", "Spring Boot", "MongoDB", "Kubernetes", "Helm", "Grafana", "OpenShift"),
 	),
 	Role(
 		id = "government-jr",
@@ -47,6 +44,5 @@ val experience = listOf(
 			"Worked on Spring Boot backends: API integrations and data persistence.",
 			"Lots of pair programming, code reviews, and sprint refinements.",
 		),
-		stack = listOf("React", "TypeScript", "Java", "Spring Boot", "AWS"),
 	),
 )
