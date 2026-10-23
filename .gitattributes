@@ -1,0 +1,3 @@
+# gradlew runs on Linux in the Docker build; keep it LF on Windows checkouts too
+gradlew text eol=lf
+*.bat text eol=crlf
