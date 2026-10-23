@@ -5,8 +5,10 @@ WORKDIR /app
 COPY gradlew settings.gradle.kts build.gradle.kts ./
 COPY gradle gradle
 COPY kotlin-js-store kotlin-js-store
+# Download Gradle, Kotlin and the npm packages in their own layer, so content edits reuse it
+RUN chmod +x gradlew && ./gradlew --no-daemon kotlinNpmInstall
 COPY src src
-RUN chmod +x gradlew && ./gradlew --no-daemon jsBrowserDistribution
+RUN ./gradlew --no-daemon jsBrowserDistribution
 
 # Serve: the built site is plain static files
 FROM caddy:2.10-alpine

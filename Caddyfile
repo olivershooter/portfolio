@@ -2,6 +2,8 @@
 :80 {
 	root * /srv
 	encode zstd gzip
+	# File names don't change between deploys, so browsers must check before reusing a copy
+	header Cache-Control "no-cache"
 	# One-page site: unknown paths get the page, like the old React router's redirect
 	try_files {path} /index.html
 	file_server

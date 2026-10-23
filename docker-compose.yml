@@ -1,8 +1,8 @@
 services:
   umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
+    image: ghcr.io/umami-software/umami:3.4.1
     ports:
-      - '8371:3000'
+      - '127.0.0.1:8371:3000'
     environment:
       DATABASE_URL: postgresql://umami:${POSTGRES_PASSWORD}@db:5432/umami
       DATABASE_TYPE: postgresql
