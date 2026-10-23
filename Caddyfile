@@ -1,0 +1,8 @@
+# Coolify's proxy handles the domain and HTTPS; this only serves the files on port 80
+:80 {
+	root * /srv
+	encode zstd gzip
+	# One-page site: unknown paths get the page, like the old React router's redirect
+	try_files {path} /index.html
+	file_server
+}
