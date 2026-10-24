@@ -2,6 +2,7 @@ package portfolio
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.attributes.ATarget
+import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.attributes.target
 import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Article
@@ -34,12 +35,19 @@ private val year = Date().getFullYear()
 private fun linkText(kind: LinkKind, href: String) =
 	if (kind == LinkKind.Live) URL(href).host else kind.label
 
+/** Umami's script counts clicks on any element carrying these attributes; no code of ours runs. */
+private fun AttrsScope<*>.umamiEvent(event: String, data: Map<String, String>) {
+	attr("data-umami-event", event)
+	data.forEach { (key, value) -> attr("data-umami-event-$key", value) }
+}
+
 @Composable
-private fun ExternalLink(href: String, text: String, className: String = "home-link") {
+private fun ExternalLink(href: String, text: String, event: String, data: Map<String, String>) {
 	A(href, {
-		classes(className)
+		classes("home-link")
 		target(ATarget.Blank)
 		attr("rel", "noreferrer")
+		umamiEvent(event, data)
 	}) {
 		Text(text)
 		Span({ classes("sr-only") }) { Text(" (opens in new tab)") }
@@ -92,7 +100,14 @@ fun Home() {
 						P({ classes("home-gap") }) { Text(project.tagline) }
 						P({ classes("home-muted") }) { Text(project.stack.joinToString()) }
 						P({ classes("home-links") }) {
-							project.links.forEach { (kind, href) -> ExternalLink(href, linkText(kind, href)) }
+							project.links.forEach { (kind, href) ->
+								ExternalLink(
+									href,
+									linkText(kind, href),
+									event = "project-link",
+									data = mapOf("project" to project.name, "kind" to kind.name),
+								)
+							}
 						}
 					}
 				}
@@ -129,12 +144,17 @@ fun Home() {
 
 			HomeSection("contact", "Contact") {
 				P { Text(profile.contactMessage) }
-				A("mailto:${profile.email}", { classes("home-link", "home-display", "home-email") }) {
+				A("mailto:${profile.email}", {
+					classes("home-link", "home-display", "home-email")
+					umamiEvent("contact", mapOf("method" to "email"))
+				}) {
 					Text(profile.email)
 				}
 				P({ classes("home-links") }) {
-					ExternalLink(profile.github, "GitHub")
-					profile.linkedin?.let { ExternalLink(it, "LinkedIn") }
+					ExternalLink(profile.github, "GitHub", event = "contact", data = mapOf("method" to "github"))
+					profile.linkedin?.let {
+						ExternalLink(it, "LinkedIn", event = "contact", data = mapOf("method" to "linkedin"))
+					}
 				}
 			}
 		}
