@@ -1,0 +1,205 @@
+name: Pipeline
+
+# check + docker on every push and PR; on main, deploy through Coolify only
+# when both pass, then create a release if the Gradle version changed.
+# Dependabot PRs for minor/patch updates are merged once both pass.
+# All jobs run on the self-hosted runner: the label in the CI_RUNNER repo variable
+# (e.g. "coolify"), or any runner labelled "self-hosted" if it is unset.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pipeline-${{ github.ref }}
+  # Superseded PR runs are cancelled; runs on main queue so a deploy is never cut off
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Kotlin tests, deploy script tests
+    runs-on: ${{ vars.CI_RUNNER || 'self-hosted' }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      # The Dockerfile's test stage runs the Kotlin tests in Chromium, so the runner needs only Docker
+      - name: Kotlin tests
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          target: test
+          push: false
+          cache-from: type=gha,scope=test
+          cache-to: type=gha,scope=test,mode=max
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - name: Deploy script tests
+        run: node --test .github/scripts/coolify-deploy.test.mjs
+
+  docker:
+    name: Docker image builds and serves the site
+    runs-on: ${{ vars.CI_RUNNER || 'self-hosted' }}
+    timeout-minutes: 20
+    env:
+      IMAGE: portfolio:ci-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: ${{ env.IMAGE }}
+          cache-from: type=gha,scope=image
+          cache-to: type=gha,scope=image,mode=max
+      - name: Smoke test
+        run: sh .github/scripts/smoke-test.sh "$IMAGE"
+      - name: Remove the image
+        if: always()
+        run: docker rmi -f "$IMAGE" || true
+
+  automerge:
+    name: Merge Dependabot update
+    needs: [check, docker]
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ${{ vars.CI_RUNNER || 'self-hosted' }}
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - name: Read update metadata
+        id: meta
+        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2.5.0
+      # Only known minor/patch updates; majors (and anything unclassified) wait for a human
+      - name: Merge and run the pipeline on main
+        if: contains(fromJSON('["version-update:semver-minor","version-update:semver-patch"]'), steps.meta.outputs.update-type)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # --match-head-commit refuses if anything was pushed after the checks ran
+          gh pr merge "$PR_URL" --squash --delete-branch --match-head-commit "$HEAD_SHA"
+          # A merge made with the workflow token doesn't trigger push runs, so start
+          # main's run (checks, then deploy) explicitly
+          gh workflow run pipeline.yml --repo "$GITHUB_REPOSITORY" --ref main
+
+  deploy:
+    name: Deploy to production
+    needs: [check, docker]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ${{ vars.CI_RUNNER || 'self-hosted' }}
+    timeout-minutes: 30
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: false
+    outputs:
+      deployed: ${{ steps.fresh.outputs.current }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      # Coolify always builds the branch tip, so only deploy if that tip is the
+      # commit this run checked. A newer push has its own run queued behind this one.
+      - name: Skip if main has moved on
+        id: fresh
+        run: |
+          latest=$(git ls-remote origin refs/heads/main | cut -f1)
+          if [ "$latest" = "$GITHUB_SHA" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::main has moved on to ${latest:0:7}; its own run will deploy it after its checks"
+            echo "current=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Deploy via Coolify and check health
+        if: steps.fresh.outputs.current == 'true'
+        env:
+          EXPECTED_COMMIT: ${{ github.sha }}
+          COOLIFY_URL: ${{ secrets.COOLIFY_URL }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID }}
+          PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+        run: node .github/scripts/coolify-deploy.mjs
+
+  release:
+    name: Release
+    needs: deploy
+    if: needs.deploy.outputs.deployed == 'true'
+    runs-on: ${{ vars.CI_RUNNER || 'self-hosted' }}
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0 # full history and tags, for the release notes
+
+      - name: Read the version from build.gradle.kts
+        id: version
+        run: |
+          version=$(sed -nE 's/^version = "([^"]+)"$/\1/p' build.gradle.kts)
+          if [ -z "$version" ]; then
+            echo "::error::build.gradle.kts has no line like: version = \"1.2.3\""
+            exit 1
+          fi
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check for an existing release
+        id: existing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; nothing to do."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Write release notes
+        if: steps.existing.outputs.skip != 'true'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          # Notes cover commits since the previous release tag. The first release
+          # has no tag to start from, so it uses the previous version bump.
+          since=$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || true)
+          if [ -z "$since" ]; then
+            since=$(git log --format=%H -G '^version = ' -- build.gradle.kts | sed -n 2p)
+          fi
+          range="${since:+$since..}HEAD"
+
+          subjects=$(git log --no-merges --format='%s' "$range")
+          section() {
+            local items
+            items=$(printf '%s\n' "$subjects" | grep -E "$1" | sed -E "s/$1 */- /" || true)
+            if [ -n "$items" ]; then printf '## %s\n\n%s\n\n' "$2" "$items"; fi
+          }
+
+          {
+            section '^feat(\([^)]*\))?!?:' 'Features'
+            section '^fix(\([^)]*\))?!?:' 'Fixes'
+            other=$(printf '%s\n' "$subjects" | grep -vE '^(feat|fix)(\([^)]*\))?!?:' | grep -v '^$' | sed 's/^/- /' || true)
+            if [ -n "$other" ]; then printf '## Other\n\n%s\n\n' "$other"; fi
+            if [ -n "$since" ]; then
+              echo "**Full changelog:** https://github.com/$GITHUB_REPOSITORY/compare/$since...$TAG"
+            fi
+          } > release-notes.md
+          cat release-notes.md
+
+      - name: Create release
+        if: steps.existing.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: gh release create "$TAG" --title "$TAG" --notes-file release-notes.md --target "$GITHUB_SHA"
