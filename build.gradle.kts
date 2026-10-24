@@ -23,13 +23,13 @@ kotlin {
 
 	sourceSets {
 		jsMain.dependencies {
-			implementation("org.jetbrains.compose.runtime:runtime:1.12.1")
-			implementation("org.jetbrains.compose.html:html-core:1.12.1")
+			implementation("org.jetbrains.compose.runtime:runtime:1.12.2")
+			implementation("org.jetbrains.compose.html:html-core:1.12.2")
 			implementation(npm("web-vitals", "6.2.3"))
 		}
 		jsTest.dependencies {
 			implementation(kotlin("test"))
-			implementation("org.jetbrains.compose.html:html-test-utils:1.12.1")
+			implementation("org.jetbrains.compose.html:html-test-utils:1.12.2")
 		}
 	}
 }
