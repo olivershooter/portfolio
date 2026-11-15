@@ -26,7 +26,7 @@ val projects = listOf(
 	Project(
 		id = "salah-times",
 		name = "Salah Times",
-		tagline = "Prayer times app. Accurate, offline-ready.",
+		tagline = "Prayer times on iPhone. Works offline.",
 		stack = listOf("React Native", "Expo", "TypeScript"),
 		links = mapOf(LinkKind.AppStore to "https://apps.apple.com/gb/app/simple-salah-times/id6760982824"),
 	),

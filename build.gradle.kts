@@ -4,7 +4,7 @@ plugins {
 }
 
 // The pipeline creates a GitHub release named v<version> after deploying a new one (see CLAUDE.md)
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
 	mavenCentral()

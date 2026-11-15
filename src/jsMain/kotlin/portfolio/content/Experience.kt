@@ -15,10 +15,9 @@ val experience = listOf(
 		org = "Deloitte",
 		period = "Feb 2026 – Present",
 		bullets = listOf(
-			"Sit inside client delivery teams: build it, ship it, move on to the next one.",
-			"Build apps that need to be fast and accessible, turning messy requirements into components that make sense.",
-			"Work across design, product and backend to keep the front end consistent across projects.",
-			"Have a say in technical direction, and mentor other engineers when I can.",
+			"Android engineer since June 2026, working on an app built to serve millions of people.",
+			"Before that, lead developer on a proof of concept for AI-led development: " +
+				"fixed the process as we went and got proprietary APIs and existing systems working together.",
 		),
 	),
 	Role(
@@ -40,9 +39,8 @@ val experience = listOf(
 		period = "Oct 2022 – Jun 2023",
 		bullets = listOf(
 			"Migrated Create React App to Vite. Build times dropped, dependency vulnerabilities went with them.",
-			"Turned Figma mockups into React/TypeScript components that actually shipped.",
+			"Turned Figma mockups into React/TypeScript components.",
 			"Worked on Spring Boot backends: API integrations and data persistence.",
-			"Lots of pair programming, code reviews, and sprint refinements.",
 		),
 	),
 )

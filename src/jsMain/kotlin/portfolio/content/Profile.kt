@@ -24,13 +24,13 @@ val profile = Profile(
 	email = "contact@olivershooter.com",
 	shortBio = "I build native Android apps in Kotlin and Jetpack Compose at Deloitte. " +
 		"Before that I built full-stack systems for Government, and before that I worked in film.",
-	contactMessage = "Got a role, a project or just want to talk Android? Drop me a line.",
+	contactMessage = "Email is the quickest way to reach me.",
 	github = "https://github.com/olivershooter",
 	linkedin = "https://www.linkedin.com/in/olivershooter",
 	before = StoryBeat(
 		year = "2014 to 2020",
 		title = "Film sets",
-		text = "Started in media production. Learned to tell stories and think visually. " +
-			"MSc Computer Science at the University of Birmingham.",
+		text = "Worked in media production, then retrained with an MSc in Computer Science " +
+			"at the University of Birmingham.",
 	),
 )
